@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "573273331716",
+    "project_id": "event-cree",
+    "storage_bucket": "event-cree.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573273331716:android:e4db84db1710dfe8d4bd51",
+        "android_client_info": {
+          "package_name": "com.example.get_contacts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-c_kHtwOEiv8pnrzqg4Pyxqfx0P7GCys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
