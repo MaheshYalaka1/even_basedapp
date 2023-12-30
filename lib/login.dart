@@ -19,15 +19,19 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   TextEditingController phoneController = TextEditingController();
   String verificationId = "";
   String otpPin = "";
-  String countryDial = "+1";
+  String countryDial = "+91";
   int screenState = 0; // 0 for registration, 1 for OTP
   Color primaryColor = const Color(0xff0074E4);
+  bool isRegistrationLoading = false;
+  bool isOTPLoading = false;
 
   @override
   void initState() {
     super.initState();
     // Start listening for SMS codes
     listenForCode();
+    // Auto-fill OTP if available
+    SmsAutoFill().listenForCode;
   }
 
   @override
@@ -119,12 +123,32 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
                           if (phoneController.text.isEmpty) {
                             showSnackBarText("Phone number is empty!");
                           } else {
-                            verifyPhone(
-                                "${countryDial}${phoneController.text}");
+                            // Set registration loading to true before making the request
+                            setState(() {
+                              isRegistrationLoading = true;
+                            });
+
+                            verifyPhone("${countryDial}${phoneController.text}")
+                                .whenComplete(() {
+                              // Set registration loading to false when the request is complete
+                              setState(() {
+                                isRegistrationLoading = false;
+                              });
+                            });
                           }
                         } else {
                           if (otpPin.length >= 6) {
-                            verifyOTP();
+                            // Set OTP loading to true before making the request
+                            setState(() {
+                              isOTPLoading = true;
+                            });
+
+                            verifyOTP().whenComplete(() {
+                              // Set OTP loading to false when the request is complete
+                              setState(() {
+                                isOTPLoading = false;
+                              });
+                            });
                           } else {
                             showSnackBarText("Enter OTP correctly");
                           }
@@ -133,38 +157,51 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
                       style: ElevatedButton.styleFrom(
                         primary: primaryColor,
                       ),
-                      child: const Text(
-                        "Continue",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: screenState == 0
+                          ? isRegistrationLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                          : isOTPLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Don't have an account?"),
-                        SizedBox(width: 5),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
+                    if (screenState == 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Don't have an account?"),
+                          SizedBox(width: 5),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignUpPage(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Sign up",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
-                          child: Text(
-                            "Sign in",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ],
-                    )
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -191,7 +228,6 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
         IntlPhoneField(
           controller: phoneController,
           showCountryFlag: false,
-          showDropdownIcon: false,
           initialValue: countryDial,
           onCountryChanged: (Country) {
             setState(() {
@@ -210,6 +246,20 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   }
 
   Widget stateOTP() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      SmsAutoFill().code.listen((autoFilledOTP) {
+        if (autoFilledOTP != null && autoFilledOTP.isNotEmpty) {
+          // Automatically fill the OTP
+          setState(() {
+            otpPin = autoFilledOTP;
+          });
+
+          // Proceed with OTP verification
+          verifyOTP();
+        }
+      });
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -254,6 +304,8 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
         PinCodeTextField(
           appContext: context,
           length: 6,
+          keyboardType:
+              TextInputType.number, // Set the keyboard type to numeric
           onChanged: (value) {
             setState(() {
               otpPin = value;

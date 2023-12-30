@@ -133,7 +133,7 @@ class _SignUpPage extends State<SignUpPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?"),
+                        const Text("allready have an account ?"),
                         const SizedBox(width: 5),
                         GestureDetector(
                           onTap: () {
@@ -145,7 +145,7 @@ class _SignUpPage extends State<SignUpPage> {
                             );
                           },
                           child: const Text(
-                            "Sign in",
+                            "login",
                             style: TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.bold,

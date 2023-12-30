@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/home.dart';
+
+import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/screens/profile.dart';
 import 'package:get_contacts/screens/shopping.dart';
 
@@ -21,7 +22,7 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage = const ChatState();
+    Widget activePage = EventScreenList();
 
     if (_currentIndex == 1) {
       activePage = shoppingPage();

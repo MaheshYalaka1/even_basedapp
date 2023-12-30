@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_contacts/screens/sending%20options.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
+import 'package:contacts_service/contacts_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChatState extends StatefulWidget {
   const ChatState({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class _ChatStateState extends State<ChatState> {
   TimeOfDay? _selectedTime;
   String? _selectedCategory;
   TextEditingController textController = TextEditingController();
+  bool _isSending = false;
 
   final List<String> categories = [
     'Birthday',
@@ -25,6 +29,24 @@ class _ChatStateState extends State<ChatState> {
     'Start New Business',
     'Business Success Party',
   ];
+
+  void _inviting() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactsPage(
+          eventCategory: _selectedCategory ?? '',
+          eventDate: _selectedDate != null
+              ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
+              : 'No date selected',
+          eventTime: _selectedTime != null
+              ? "${_selectedTime!.hour}:${_selectedTime!.minute}"
+              : 'No time selected',
+          enteredText: textController.text,
+        ),
+      ),
+    );
+  }
 
   Future<void> _getImageFromSource(ImageSource source) async {
     final XFile? pickedFile = await _imagePicker.pickImage(source: source);
@@ -65,7 +87,6 @@ class _ChatStateState extends State<ChatState> {
   }
 
   void _shareInformation() {
-    // Prepare the information to share
     String category = _selectedCategory ?? 'No category selected';
     String date = _selectedDate != null
         ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
@@ -83,19 +104,32 @@ class _ChatStateState extends State<ChatState> {
         'Event Date: $date\n'
         'Event Time: $time\n';
 
-    // Share the information using the share package
     Share.share(
       text,
       subject: 'Event Information',
-      // You can customize the subject as needed
     );
+
+    Navigator.pop(context, {
+      'category': category,
+    });
+  }
+
+  void _submitInformation() {
+    Navigator.pop(context, {
+      'category': _selectedCategory ?? 'No category selected',
+      'date': _selectedDate != null
+          ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
+          : 'No date selected',
+      'time': _selectedTime ?? 'No time selected',
+      'enteredText ': textController.text,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('event creation'),
+        title: const Text('Event Creation'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -103,7 +137,6 @@ class _ChatStateState extends State<ChatState> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dropdown for selecting category
               DropdownButton<String>(
                 value: _selectedCategory,
                 hint: const Text('Select Event Category'),
@@ -120,7 +153,6 @@ class _ChatStateState extends State<ChatState> {
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              // Input line for selecting date
               Row(
                 children: [
                   Expanded(
@@ -165,7 +197,6 @@ class _ChatStateState extends State<ChatState> {
                 ],
               ),
               const SizedBox(height: 16),
-              // Text input box
               TextFormField(
                 maxLength: 1000,
                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -176,14 +207,11 @@ class _ChatStateState extends State<ChatState> {
                   labelText: 'Enter text (3-1000 characters)',
                   border: OutlineInputBorder(),
                 ),
-                // You can add onChanged or controller if needed
               ),
               const SizedBox(height: 16),
-              // Image upload section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Upload Photos button inside the image container
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: GestureDetector(
@@ -195,13 +223,13 @@ class _ChatStateState extends State<ChatState> {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.black, // Set the color of the border
-                            width: 2.0, // Set the width of the border
+                            color: const Color.fromARGB(132, 0, 0, 0),
+                            width: 2.0,
                           ),
-                          borderRadius:
-                              BorderRadius.circular(8.0), // Set border radius
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        height: 150, // Increase the height as needed
+                        height: 150,
+                        width: 320, // Adjust this value to increase the height
                         child: Center(
                           child: images.isEmpty
                               ? Text(
@@ -214,15 +242,14 @@ class _ChatStateState extends State<ChatState> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      for (var image in images)
+                                      for (var i = 0; i < images.length; i++)
                                         GestureDetector(
                                           onTap: () {
-                                            _viewImage(
-                                                image); // Call _viewImage function
+                                            _viewImage(images[i], i);
                                           },
                                           child: Container(
                                             margin: const EdgeInsets.all(4),
-                                            child: image,
+                                            child: images[i],
                                           ),
                                         ),
                                     ],
@@ -232,7 +259,6 @@ class _ChatStateState extends State<ChatState> {
                       ),
                     ),
                   ),
-                  // + icon button below the image container
                   if (images.isNotEmpty)
                     Align(
                       alignment: Alignment.bottomRight,
@@ -241,7 +267,6 @@ class _ChatStateState extends State<ChatState> {
                           await _getImageFromSource(ImageSource.gallery);
                         },
                         child: Icon(Icons.add),
-                        // Remove background color
                       ),
                     ),
                   const SizedBox(
@@ -252,18 +277,19 @@ class _ChatStateState extends State<ChatState> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // Add functionality for the submit button
-                          // For example, you can handle form submission here
-                          _shareInformation();
+                          _submitInformation();
                         },
                         child: Text('Submit'),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          _shareInformation();
-                        },
-                        child: Text('Invite'),
-                      ),
+                          onPressed: _isSending ? null : _inviting,
+                          child: _isSending
+                              ? const SizedBox(
+                                  height: 16,
+                                  width: 16,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Text('invite')),
                     ],
                   ),
                 ],
@@ -275,16 +301,60 @@ class _ChatStateState extends State<ChatState> {
     );
   }
 
-  void _viewImage(Image image) {
+  void _viewImage(Image image, int index) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           content: Container(
-            child: image,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  child: image,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _removeImage(index);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Remove'),
+                    ),
+                    SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _replaceImage(index);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Replace'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      images.removeAt(index);
+    });
+  }
+
+  Future<void> _replaceImage(int index) async {
+    final XFile? pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        images[index] = Image.file(File(pickedFile.path));
+      });
+    }
   }
 }
