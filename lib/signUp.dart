@@ -221,7 +221,7 @@ class _SignUpPage extends State<SignUpPage> {
           controller: emailID,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: 'Enter your email',
+            hintText: 'Email address',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),

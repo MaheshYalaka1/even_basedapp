@@ -11,41 +11,53 @@ class EventScreenList extends StatefulWidget {
 class _EventScreenListState extends State<EventScreenList> {
   List<Map<String, String>> events = [
     {
-      'category': 'Yesterday Events',
+      'category': 'My Events',
     },
     {
       'category': 'Meeting',
-      'date': '2023-02-14',
+      'date': '2024-01-20',
+      'Place': 'Guntur',
       'time': '3:00 PM',
       'enteredText': 'Discuss project updates.',
-    },
-    // Add more predefined events as needed
-    {
-      'category': 'Today Events',
+      'imagePath': 'assets/just.jpg',
     },
     {
       'category': 'Birthday',
-      'date': '2023-01-01',
+      'date': '2024-03-01',
+      'Place': 'chennai',
       'time': '12:00 PM',
       'enteredText': 'Happy Birthday!',
+      'imagePath': 'assets/splash1 .jpg',
     },
-    {
-      'category': 'Meeting',
-      'date': '2023-02-15',
-      'time': '10:30 AM',
-      'enteredText': 'Discuss project updates.',
-    },
+
     // Add more predefined events as needed
     {
-      'category': 'Tomorrow Events',
+      'category': 'Past Events',
     },
     {
       'category': 'Appointment',
       'date': '2023-02-16',
+      'Place': 'Hyderabad',
       'time': '2:30 PM',
       'enteredText': 'Meet with client.',
+      'imagePath': 'assets/splash2 .jpg',
     },
-    // Add more predefined events as needed
+    {
+      'category': 'Meeting',
+      'date': '2023-02-15',
+      'Place': 'vijayawada',
+      'time': '10:30 AM',
+      'enteredText': 'Discuss project updates.',
+      'imagePath': 'assets/splash2.jpg',
+    },
+    {
+      'category': 'marrage',
+      'date': '2023-02-15',
+      'Place': 'KPHP colony',
+      'time': '10:30 AM',
+      'enteredText': 'Discuss project updates.',
+      'imagePath': 'assets/splash3.jpg',
+    }
   ];
 
   @override
@@ -57,7 +69,7 @@ class _EventScreenListState extends State<EventScreenList> {
           actions: [
             IconButton(
               icon: Icon(Icons.add),
-              onPressed: () {
+              onPressed: () async {
                 _navigateToChatState();
               },
             ),
@@ -70,14 +82,23 @@ class _EventScreenListState extends State<EventScreenList> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (event['category'] == 'Yesterday Events' ||
-                    event['category'] == 'Today Events' ||
-                    event['category'] == 'Tomorrow Events')
+                if (event['category'] == 'My Events' ||
+                    event['category'] == 'Past Events')
                   _buildHeader(event),
                 if (event.containsKey('date'))
                   ListTile(
+                    // Add leading avatar to the list tile
+                    leading: CircleAvatar(
+                      backgroundImage: AssetImage(event['imagePath'] ?? ''),
+                    ),
                     title: Text('Category: ${event['category']}'),
-                    subtitle: Text('Date: ${event['date']}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${event['Place']}'),
+                        Text('${event['date']}'),
+                      ],
+                    ),
                     trailing: Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       _navigateToEventDetails(event);
@@ -126,12 +147,15 @@ class _EventScreenListState extends State<EventScreenList> {
   }
 
   void _navigateToEventDetails(Map<String, String> event) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EventDetailsScreen(event: event),
-      ),
-    );
+    // Simulate loading data asynchronously with Future.delayed
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventDetailsScreen(event: event),
+        ),
+      );
+    });
   }
 }
 
@@ -157,14 +181,28 @@ class EventDetailsScreen extends StatelessWidget {
             if (event.containsKey('date')) Text('Date: ${event['date']}'),
             if (event.containsKey('date')) const SizedBox(height: 16),
             if (event.containsKey('date'))
+              Text('Place: ${event['Place'] ?? 'Not specified'}'),
+            if (event.containsKey('date')) const SizedBox(height: 16),
+            if (event.containsKey('date'))
               Text('Time: ${event['time'] ?? 'Not specified'}'),
             if (event.containsKey('date')) const SizedBox(height: 16),
             if (event.containsKey('date'))
               Text('Entered Text: ${event['enteredText'] ?? 'Not specified'}'),
-            // Add more details as needed
+            if (event.containsKey('date')) const SizedBox(height: 16),
+            if (event.containsKey('date'))
+              if (event['imagePath'] != null)
+                Image.asset(
+                  event['imagePath']!,
+                  fit: BoxFit.cover,
+                  height: 200, // Adjust the height as needed
+                ),
           ],
         ),
       ),
     );
   }
+}
+
+void main() {
+  runApp(EventScreenList());
 }

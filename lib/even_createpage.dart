@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_contacts/screens/sending%20options.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:share/share.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:video_player/video_player.dart';
 
 class ChatState extends StatefulWidget {
   const ChatState({Key? key}) : super(key: key);
@@ -22,6 +20,9 @@ class _ChatStateState extends State<ChatState> {
   String? _selectedCategory;
   TextEditingController textController = TextEditingController();
   bool _isSending = false;
+  bool _isVideoVisible = false;
+  late VideoPlayerController _videoPlayerController;
+  late Future<void> _initializeVideoPlayerFuture;
 
   final List<String> categories = [
     'Birthday',
@@ -29,6 +30,10 @@ class _ChatStateState extends State<ChatState> {
     'Start New Business',
     'Business Success Party',
   ];
+
+  List<VideoPlayerWidget> videoPlayers = [];
+  final String sampleVideoUrl =
+      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4";
 
   void _inviting() {
     Navigator.push(
@@ -43,9 +48,20 @@ class _ChatStateState extends State<ChatState> {
               ? "${_selectedTime!.hour}:${_selectedTime!.minute}"
               : 'No time selected',
           enteredText: textController.text,
+          videoUrl: sampleVideoUrl,
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _videoPlayerController = VideoPlayerController.network(sampleVideoUrl);
+    _initializeVideoPlayerFuture =
+        _videoPlayerController.initialize().then((_) {
+      setState(() {}); // Rebuild the widget when the video playback changes
+    });
   }
 
   Future<void> _getImageFromSource(ImageSource source) async {
@@ -84,34 +100,6 @@ class _ChatStateState extends State<ChatState> {
         _selectedTime = pickedTime;
       });
     }
-  }
-
-  void _shareInformation() {
-    String category = _selectedCategory ?? 'No category selected';
-    String date = _selectedDate != null
-        ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
-        : 'No date selected';
-    String time = _selectedTime != null
-        ? "${_selectedTime!.hour}:${_selectedTime!.minute}"
-        : 'No time selected';
-
-    String enteredText = textController.text.isNotEmpty
-        ? 'Entered Text: ${textController.text}\n'
-        : '';
-
-    String text = '$enteredText'
-        'Event Category: $category\n'
-        'Event Date: $date\n'
-        'Event Time: $time\n';
-
-    Share.share(
-      text,
-      subject: 'Event Information',
-    );
-
-    Navigator.pop(context, {
-      'category': category,
-    });
   }
 
   void _submitInformation() {
@@ -294,6 +282,66 @@ class _ChatStateState extends State<ChatState> {
                   ),
                 ],
               ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _isVideoVisible = true;
+                  });
+                  _videoPlayerController.play();
+                },
+                child: Text('See Video'),
+              ),
+              if (_isVideoVisible)
+                Column(
+                  children: [
+                    SizedBox(height: 16),
+                    FutureBuilder(
+                      future: _initializeVideoPlayerFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return AspectRatio(
+                            aspectRatio:
+                                _videoPlayerController.value.aspectRatio,
+                            child: VideoPlayer(_videoPlayerController),
+                          );
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (_videoPlayerController.value.isPlaying) {
+                                _videoPlayerController.pause();
+                              } else {
+                                _videoPlayerController.play();
+                              }
+                            });
+                          },
+                          icon: Icon(
+                            _videoPlayerController.value.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isVideoVisible = false;
+                            });
+                            _videoPlayerController.pause();
+                          },
+                          child: Text('Close Video'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -356,5 +404,55 @@ class _ChatStateState extends State<ChatState> {
         images[index] = Image.file(File(pickedFile.path));
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
+}
+
+class VideoPlayerWidget extends StatefulWidget {
+  final String videoURL;
+
+  const VideoPlayerWidget({Key? key, required this.videoURL}) : super(key: key);
+
+  @override
+  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController _videoPlayerController;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _videoPlayerController = VideoPlayerController.network(widget.videoURL);
+    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return AspectRatio(
+            aspectRatio: _videoPlayerController.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 }
