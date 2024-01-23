@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_contacts/even_createpage.dart';
+import 'package:get_contacts/screens/even_details.dart';
 
 class EventScreenList extends StatefulWidget {
   const EventScreenList({Key? key}) : super(key: key);
@@ -9,7 +10,7 @@ class EventScreenList extends StatefulWidget {
 }
 
 class _EventScreenListState extends State<EventScreenList> {
-  List<Map<String, String>> events = [
+  List<Map<String, dynamic>> events = [
     {
       'category': 'My Events',
     },
@@ -19,7 +20,8 @@ class _EventScreenListState extends State<EventScreenList> {
       'Place': 'Guntur',
       'time': '3:00 PM',
       'enteredText': 'Discuss project updates.',
-      'imagePath': 'assets/just.jpg',
+      'imagePath': 'assets/splash4.jpg',
+      'customHeight': 200.0, // Custom height for Meeting event
     },
     {
       'category': 'Birthday',
@@ -27,10 +29,9 @@ class _EventScreenListState extends State<EventScreenList> {
       'Place': 'chennai',
       'time': '12:00 PM',
       'enteredText': 'Happy Birthday!',
-      'imagePath': 'assets/splash1 .jpg',
+      'imagePath': 'assets/splash2.jpg',
+      'customHeight': 200.0, // Custom height for Birthday event
     },
-
-    // Add more predefined events as needed
     {
       'category': 'Past Events',
     },
@@ -40,10 +41,10 @@ class _EventScreenListState extends State<EventScreenList> {
       'Place': 'Hyderabad',
       'time': '2:30 PM',
       'enteredText': 'Meet with client.',
-      'imagePath': 'assets/splash2 .jpg',
+      'imagePath': 'assets/splash3.jpg',
     },
     {
-      'category': 'Meeting',
+      'category': 'tripe arakuS',
       'date': '2023-02-15',
       'Place': 'vijayawada',
       'time': '10:30 AM',
@@ -56,7 +57,7 @@ class _EventScreenListState extends State<EventScreenList> {
       'Place': 'KPHP colony',
       'time': '10:30 AM',
       'enteredText': 'Discuss project updates.',
-      'imagePath': 'assets/splash3.jpg',
+      'imagePath': 'assets/splash1.jpg',
     }
   ];
 
@@ -86,42 +87,144 @@ class _EventScreenListState extends State<EventScreenList> {
                     event['category'] == 'Past Events')
                   _buildHeader(event),
                 if (event.containsKey('date'))
-                  ListTile(
-                    // Add leading avatar to the list tile
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(event['imagePath'] ?? ''),
-                    ),
-                    title: Text('Category: ${event['category']}'),
-                    subtitle: Column(
+                  Container(
+                    width: MediaQuery.of(context).size.width - 16,
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${event['Place']}'),
-                        Text('${event['date']}'),
+                        if (event.containsKey('date') &&
+                            (event['category'] == 'Meeting' ||
+                                event['category'] == 'Birthday'))
+                          Stack(
+                            children: [
+                              Container(
+                                height: event['customHeight'] ??
+                                    MediaQuery.of(context).size.height * 0.5,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(event['imagePath'] ?? ''),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              Positioned(
+                                top: 8.0,
+                                left: 8.0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Category: ${event['category']}',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Place: ${event['Place'] ?? 'Not specified'}',
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Date: ${event['date'] ?? 'Not specified'}',
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 8.0,
+                                right: 8.0,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _navigateToEventDetails(event,
+                                        context); // Pass the context here
+                                  },
+                                  child: Text(
+                                    'View',
+                                    style: TextStyle(fontSize: 11.0),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Color.fromARGB(189, 210, 248, 43),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 8.0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        else if (event['category'] != 'My Events' &&
+                            event['category'] != 'Past Events')
+                          Container(
+                            margin: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage(event['imagePath'] ?? ''),
+                              ),
+                              title: Text(
+                                '${event['category']}',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('${event['Place']}'),
+                                  Text('${event['date']}'),
+                                ],
+                              ),
+                              trailing: ElevatedButton(
+                                onPressed: () {
+                                  _navigateToEventDetails(
+                                      event, context); // Pass the context here
+                                },
+                                child: Text(
+                                  'View',
+                                  style: TextStyle(fontSize: 11.0),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color.fromARGB(189, 210, 248, 43),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 8.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      _navigateToEventDetails(event);
-                    },
                   ),
-                if (event.containsKey('date'))
-                  Divider(), // Add divider to separate events
+                if (event.containsKey('date')) Divider(),
               ],
             );
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(Map<String, String> event) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        event['category'] ?? '',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
         ),
       ),
     );
@@ -146,63 +249,37 @@ class _EventScreenListState extends State<EventScreenList> {
     }
   }
 
-  void _navigateToEventDetails(Map<String, String> event) {
-    // Simulate loading data asynchronously with Future.delayed
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EventDetailsScreen(event: event),
-        ),
-      );
-    });
-  }
-}
-
-class EventDetailsScreen extends StatelessWidget {
-  final Map<String, String> event;
-
-  const EventDetailsScreen({Key? key, required this.event}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Event Details'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (event.containsKey('date'))
-              Text('Category: ${event['category']}'),
-            if (event.containsKey('date')) const SizedBox(height: 16),
-            if (event.containsKey('date')) Text('Date: ${event['date']}'),
-            if (event.containsKey('date')) const SizedBox(height: 16),
-            if (event.containsKey('date'))
-              Text('Place: ${event['Place'] ?? 'Not specified'}'),
-            if (event.containsKey('date')) const SizedBox(height: 16),
-            if (event.containsKey('date'))
-              Text('Time: ${event['time'] ?? 'Not specified'}'),
-            if (event.containsKey('date')) const SizedBox(height: 16),
-            if (event.containsKey('date'))
-              Text('Entered Text: ${event['enteredText'] ?? 'Not specified'}'),
-            if (event.containsKey('date')) const SizedBox(height: 16),
-            if (event.containsKey('date'))
-              if (event['imagePath'] != null)
-                Image.asset(
-                  event['imagePath']!,
-                  fit: BoxFit.cover,
-                  height: 200, // Adjust the height as needed
-                ),
-          ],
+  Widget _buildHeader(Map<String, dynamic> event) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        event['category'] ?? '',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16.0,
         ),
       ),
     );
   }
-}
 
-void main() {
-  runApp(EventScreenList());
+  void _navigateToEventDetails(
+      Map<String, dynamic> event, BuildContext context) {
+    // Create a new Map<String, String> with values explicitly cast to String
+    Map<String, String> eventDetails = {
+      'category': event['category'].toString(),
+      'Place': event['Place'].toString(),
+      'date': event['date'].toString(),
+      'time': event['time'].toString(),
+      'enteredText': event['enteredText'].toString(),
+      'imagePath': event['imagePath'].toString(),
+      'customHeight': (event['customHeight'] ?? '').toString(),
+    };
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EventDetailsScreen(event: eventDetails),
+      ),
+    );
+  }
 }

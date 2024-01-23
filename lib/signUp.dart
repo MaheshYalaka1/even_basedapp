@@ -85,79 +85,88 @@ class _SignUpPage extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    screenState == 0 ? stateRegister() : stateOTP(),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (screenState == 0) {
-                          if (phoneController.text.isEmpty) {
-                            showSnackBarText("Phone number is empty!");
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      screenState == 0 ? stateRegister() : stateOTP(),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (screenState == 0) {
+                            if (phoneController.text.isEmpty) {
+                              showSnackBarText("Phone number is empty!");
+                            } else {
+                              // Uncomment the following line to enable phone number verification
+                              verifyPhone(
+                                  "$countryDial${phoneController.text}");
+                              setState(() {
+                                screenState = 1;
+                              });
+                            }
                           } else {
-                            verifyPhone("$countryDial${phoneController.text}");
+                            if (otpPin.length >= 6) {
+                              // Uncomment the following line to enable OTP verification
+                              verifyOTP();
+                            } else {
+                              showSnackBarText("Enter OTP correctly");
+                            }
                           }
-                        } else {
-                          if (otpPin.length >= 6) {
-                            verifyOTP();
-                          } else {
-                            showSnackBarText("Enter OTP correctly");
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: primaryColor,
-                      ),
-                      child: const Text(
-                        "Continue",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: primaryColor,
                         ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("allready have an account ?"),
-                        const SizedBox(width: 5),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "login",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: const Text(
+                          "Continue",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                         ),
-                      ],
-                    )
-                  ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("already have an account ?"),
+                          const SizedBox(width: 5),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "login",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -166,8 +175,24 @@ class _SignUpPage extends State<SignUpPage> {
 
   Widget stateRegister() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Text(
+          'Sign up',
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        const Text(
+          'You have a chance to create a new account if you really want to.',
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+          textAlign: TextAlign.left,
+        ),
         const SizedBox(
           height: 16,
         ),
@@ -189,6 +214,24 @@ class _SignUpPage extends State<SignUpPage> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           ),
         ),
+        const Text(
+          "Middle Name",
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        TextField(
+          controller: firstName,
+          decoration: InputDecoration(
+            hintText: 'Enter your Middle name',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+        ),
         const SizedBox(height: 12),
         const Text(
           "Last Name",
@@ -201,7 +244,7 @@ class _SignUpPage extends State<SignUpPage> {
         TextField(
           controller: lastName,
           decoration: InputDecoration(
-            hintText: 'Enter your last name',
+            hintText: 'Enter your family Name',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -237,6 +280,7 @@ class _SignUpPage extends State<SignUpPage> {
             fontSize: 16,
           ),
         ),
+        // Uncomment the following line to enable phone number input
         IntlPhoneField(
           controller: phoneController,
           showCountryFlag: false,
@@ -263,43 +307,40 @@ class _SignUpPage extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Text(
-          "Enter OTP",
+          "Verification",
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
+        const SizedBox(
+          height: 17,
+        ),
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
             children: [
               const TextSpan(
-                text: "We just sent a code to",
+                text: "A verification code has been sent to",
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
                 ),
               ),
               TextSpan(
-                text: "$countryDial${phoneController.text}",
+                text: "\n$countryDial${phoneController.text}",
                 style: const TextStyle(
                   color: Colors.black45,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
-              const TextSpan(
-                text: "\nEnter the code here to continue",
-                style: TextStyle(
-                  color: Colors.black38,
-                  fontSize: 12,
-                ),
-              ),
             ],
           ),
         ),
         const SizedBox(height: 20),
+        //Uncomment the following line to enable OTP input
         PinCodeTextField(
           appContext: context,
           length: 6,
@@ -318,7 +359,7 @@ class _SignUpPage extends State<SignUpPage> {
         RichText(
           text: TextSpan(children: [
             const TextSpan(
-              text: "Didn't receive the code?",
+              text: "haen't recieved code yet?",
               style: TextStyle(
                 color: Colors.black38,
                 fontSize: 12,

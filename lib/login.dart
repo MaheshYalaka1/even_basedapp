@@ -214,16 +214,19 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
 
   Widget stateRegister() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 16),
         Text(
-          "Phone Number",
+          "Login",
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
+        ),
+        SizedBox(
+          height: 10,
         ),
         IntlPhoneField(
           controller: phoneController,
@@ -235,12 +238,23 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
             });
           },
           decoration: InputDecoration(
+            labelText: 'phone number',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16),
           ),
         ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'password',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          obscureText: true,
+        )
       ],
     );
   }
@@ -263,38 +277,34 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          "Enter OTP",
+        const Text(
+          "Verification",
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
+        const SizedBox(
+          height: 17,
+        ),
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
             children: [
-              TextSpan(
-                text: "We just sent a code to",
+              const TextSpan(
+                text: "A verification code has been sent to",
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
                 ),
               ),
               TextSpan(
-                text: "${countryDial}${phoneController.text}",
+                text: "\n$countryDial${phoneController.text}",
                 style: const TextStyle(
                   color: Colors.black45,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                ),
-              ),
-              const TextSpan(
-                text: "\nEnter the code here to continue",
-                style: TextStyle(
-                  color: Colors.black38,
-                  fontSize: 12,
                 ),
               ),
             ],
@@ -304,8 +314,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
         PinCodeTextField(
           appContext: context,
           length: 6,
-          keyboardType:
-              TextInputType.number, // Set the keyboard type to numeric
+          keyboardType: TextInputType.number,
           onChanged: (value) {
             setState(() {
               otpPin = value;
@@ -315,6 +324,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
             activeColor: primaryColor,
             selectedColor: primaryColor,
             inactiveColor: Colors.black,
+            shape: PinCodeFieldShape.box, // Set the box shape to underline
           ),
         ),
         SizedBox(height: 20),

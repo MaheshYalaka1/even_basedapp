@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_contacts/screens/sending%20options.dart';
+import 'package:get_contacts/screens/sending_options.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -183,6 +183,13 @@ class _ChatStateState extends State<ChatState> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: textController,
+                decoration: InputDecoration(
+                  labelText: 'enter location ',
+                ),
               ),
               const SizedBox(height: 16),
               TextFormField(
