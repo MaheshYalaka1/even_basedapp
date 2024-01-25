@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/TabBar.dart';
+import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/signUp.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -21,7 +21,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   String otpPin = "";
   String countryDial = "+91";
   int screenState = 0; // 0 for registration, 1 for OTP
-  Color primaryColor = const Color(0xff0074E4);
+
   bool isRegistrationLoading = false;
   bool isOTPLoading = false;
 
@@ -75,7 +75,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => TabScreen(),
+          builder: (context) => const EventScreenList(),
         ),
       );
     } catch (e) {
@@ -100,7 +100,6 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -155,7 +154,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: primaryColor,
+                        shadowColor: Colors.black,
                       ),
                       child: screenState == 0
                           ? isRegistrationLoading
@@ -195,7 +194,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
                             child: Text(
                               "Sign up",
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromARGB(241, 71, 101, 250),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -222,7 +221,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 27,
           ),
         ),
         SizedBox(
@@ -260,7 +259,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   }
 
   Widget stateOTP() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       SmsAutoFill().code.listen((autoFilledOTP) {
         if (autoFilledOTP != null && autoFilledOTP.isNotEmpty) {
           // Automatically fill the OTP
@@ -321,8 +320,8 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
             });
           },
           pinTheme: PinTheme(
-            activeColor: primaryColor,
-            selectedColor: primaryColor,
+            activeColor: Colors.black26,
+            selectedColor: Colors.blue,
             inactiveColor: Colors.black,
             shape: PinCodeFieldShape.box, // Set the box shape to underline
           ),
@@ -347,7 +346,7 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
                 child: Text(
                   'Resend',
                   style: TextStyle(
-                    color: primaryColor,
+                    color: Colors.blue,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

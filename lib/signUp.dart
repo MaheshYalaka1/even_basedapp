@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/TabBar.dart';
 import 'package:get_contacts/login.dart';
+import 'package:get_contacts/screens/events_list.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,7 +60,7 @@ class _SignUpPage extends State<SignUpPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => TabScreen(),
+          builder: (context) => const EventScreenList(),
         ),
       );
     } catch (e) {

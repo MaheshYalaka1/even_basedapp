@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get_contacts/TabBar.dart';
 import 'package:get_contacts/firebase_options.dart';
 import 'package:get_contacts/login.dart';
+import 'package:get_contacts/screens/events_list.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 void main() async {
@@ -19,11 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
-              return TabScreen();
+              return const EventScreenList();
             }
             return SplashScreenController();
           }),

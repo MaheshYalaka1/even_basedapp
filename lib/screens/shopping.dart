@@ -38,14 +38,14 @@ class _shoppingPage extends State<shoppingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Birthday Gifts'),
+        title: const Text('Birthday Gifts'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
             child: isLoading
-                ? Center(
+                ? const Center(
                     child: CircularProgressIndicator(),
                   )
                 : finalResult.isNotEmpty
@@ -89,7 +89,7 @@ class _shoppingPage extends State<shoppingPage> {
                           ],
                         ),
                       )
-                    : Center(
+                    : const Center(
                         child: Text('No data available'),
                       ),
           ),
