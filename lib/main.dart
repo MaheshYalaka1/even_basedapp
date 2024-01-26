@@ -1,18 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get_contacts/firebase_options.dart';
+
 import 'package:get_contacts/login.dart';
-import 'package:get_contacts/screens/events_list.dart';
-import 'package:sms_autofill/sms_autofill.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(MyApp());
-  SmsAutoFill().unregisterListener();
 }
 
 class MyApp extends StatelessWidget {
@@ -20,14 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, snapshot) {
-            if (snapshot.hasData) {
-              return const EventScreenList();
-            }
-            return SplashScreenController();
-          }),
+      home: SplashScreenController(),
     );
   }
 }
@@ -97,8 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   margin: EdgeInsets.all(16.0),
-                  height: MediaQuery.of(context).size.height *
-                      0.4, // Adjust the height as needed
+                  height: MediaQuery.of(context).size.height * 0.4,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black, width: 8.0),
                   ),
@@ -113,8 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: MediaQuery.of(context).size.height *
-                0.1, // Adjust the height as needed
+            bottom: MediaQuery.of(context).size.height * 0.1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

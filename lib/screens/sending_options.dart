@@ -108,135 +108,129 @@ class _ContactsPageState extends State<ContactsPage> {
 
       body: _isLoadingContacts
           ? const Center(child: CircularProgressIndicator())
-          : Stack(
+          : Column(
               children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 41, 40, 40),
-                            width: 1.5,
-                          ),
-                          borderRadius: BorderRadius.circular(11.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: _onSearchTextChanged,
-                            decoration: InputDecoration(
-                              hintText: 'Search contacts...',
-                              contentPadding: const EdgeInsets.all(8.0),
-                              prefixIcon: const Icon(Icons.search),
-                            ),
-                          ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: _onSearchTextChanged,
+                        decoration: InputDecoration(
+                          hintText: 'Search contacts...',
+                          contentPadding: EdgeInsets.all(8.0),
+                          prefixIcon: Icon(Icons.search),
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _filteredContacts.length,
-                        itemBuilder: (context, index) {
-                          Contact contact = _filteredContacts[index];
-                          return Container(
-                            margin: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 243, 228, 228),
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 27, 26, 26),
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                contact.displayName ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              subtitle: Text(
-                                contact.emails?.isNotEmpty == true
-                                    ? contact.emails!.first.value ?? ''
-                                    : 'No email address',
-                              ),
-                              leading: ClipOval(
-                                child: contact.avatar != null &&
-                                        contact.avatar!.isNotEmpty
-                                    ? CircleAvatar(
-                                        backgroundImage:
-                                            MemoryImage(contact.avatar!),
-                                        backgroundColor: Colors.transparent,
-                                        radius:
-                                            25.0, // Adjust the radius to increase/decrease the size
-                                      )
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: avatarColors[
-                                              index % avatarColors.length],
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: const Icon(Icons.person,
-                                            color: Colors.white,
-                                            size:
-                                                40.0), // Adjust the size of the icon
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _filteredContacts.length,
+                    itemBuilder: (context, index) {
+                      Contact contact = _filteredContacts[index];
+                      return Container(
+                        margin: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 243, 228, 228),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 27, 26, 26),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            contact.displayName ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            contact.emails?.isNotEmpty == true
+                                ? contact.emails!.first.value ?? ''
+                                : 'No email address',
+                          ),
+                          leading: ClipOval(
+                            child: contact.avatar != null &&
+                                    contact.avatar!.isNotEmpty
+                                ? CircleAvatar(
+                                    backgroundImage:
+                                        MemoryImage(contact.avatar!),
+                                    backgroundColor: Colors.transparent,
+                                    radius:
+                                        25.0, // Adjust the radius to increase/decrease the size
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: avatarColors[
+                                          index % avatarColors.length],
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 1.0,
                                       ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.message),
-                                    onPressed: () {
-                                      _toggleMessageContactSelection(contact);
-                                    },
-                                    color: _selectedMessageContacts
-                                            .contains(contact)
+                                    ),
+                                    child: const Icon(Icons.person,
+                                        color: Colors.white,
+                                        size:
+                                            40.0), // Adjust the size of the icon
+                                  ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.message),
+                                onPressed: () {
+                                  _toggleMessageContactSelection(contact);
+                                },
+                                color:
+                                    _selectedMessageContacts.contains(contact)
                                         ? Colors.blue
                                         : null,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.email),
-                                    onPressed: () {
-                                      _toggleEmailContactSelection(contact);
-                                    },
-                                    color:
-                                        _selectedEmailContacts.contains(contact)
-                                            ? Colors.blue
-                                            : null,
-                                  ),
-                                  const SizedBox(
-                                    height: 2,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.whatshot),
-                                    onPressed: () {
-                                      _toggleWhatsappContactSelection(contact);
-                                    },
-                                    color: _selectedWhatsappContacts
-                                            .contains(contact)
-                                        ? Color.fromARGB(255, 72, 89, 240)
-                                        : null,
-                                  ),
-                                ],
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                              IconButton(
+                                icon: const Icon(Icons.email),
+                                onPressed: () {
+                                  _toggleEmailContactSelection(contact);
+                                },
+                                color: _selectedEmailContacts.contains(contact)
+                                    ? Colors.blue
+                                    : null,
+                              ),
+                              SizedBox(
+                                height: 2,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.whatshot),
+                                onPressed: () {
+                                  _toggleWhatsappContactSelection(contact);
+                                },
+                                color:
+                                    _selectedWhatsappContacts.contains(contact)
+                                        ? Colors.green
+                                        : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                Positioned(
-                  bottom: 16.0,
-                  left: MediaQuery.of(context).size.width / 2 - 75.0,
+                Container(
+                  padding: EdgeInsets.all(11.0),
                   child: ElevatedButton(
                     onPressed: () {
                       _showSendOptions();
@@ -248,7 +242,10 @@ class _ContactsPageState extends State<ContactsPage> {
                           horizontal: 29.0, vertical: 15.0),
                       side: const BorderSide(color: Colors.black, width: 2.0),
                     ),
-                    child: const Text('Send Invitation'),
+                    child: Text(
+                      'Send Invitation',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ),
               ],

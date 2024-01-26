@@ -3,8 +3,6 @@ import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/signUp.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sms_autofill/sms_autofill.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,11 +11,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPage();
 }
 
-class _LoginPage extends State<LoginPage> with CodeAutoFill {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+class _LoginPage extends State<LoginPage> {
   TextEditingController phoneController = TextEditingController();
-  String verificationId = "";
   String otpPin = "";
   String countryDial = "+91";
   int screenState = 0; // 0 for registration, 1 for OTP
@@ -28,59 +23,27 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   @override
   void initState() {
     super.initState();
-    // Start listening for SMS codes
-    listenForCode();
-    // Auto-fill OTP if available
-    SmsAutoFill().listenForCode;
-  }
-
-  @override
-  void codeUpdated() {
-    setState(() {
-      otpPin = code ?? '';
-    });
   }
 
   Future<void> verifyPhone(String number) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: number,
-      timeout: const Duration(seconds: 30),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        showSnackBarText("Authentication complete");
-      },
-      verificationFailed: (e) {
-        showSnackBarText('Error: ${e.code}');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        showSnackBarText("OTP sent!");
-        this.verificationId = verificationId;
-        setState(() {
-          screenState = 1;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        showSnackBarText("TimeOut!");
-      },
-    );
+    // Mock verification process (replace with your desired logic)
+    await Future.delayed(Duration(seconds: 2));
+    showSnackBarText("OTP sent!");
+    setState(() {
+      screenState = 1;
+    });
   }
 
   Future<void> verifyOTP() async {
-    try {
-      await _auth.signInWithCredential(
-        PhoneAuthProvider.credential(
-          verificationId: verificationId,
-          smsCode: otpPin,
-        ),
-      );
+    // Mock OTP verification process (replace with your desired logic)
+    await Future.delayed(Duration(seconds: 2));
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const EventScreenList(),
-        ),
-      );
-    } catch (e) {
-      showSnackBarText("Error: Incorrect OTP. Please try again.");
-    }
+    // Navigate to the next screen on successful verification
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const EventScreenList(),
+      ),
+    );
   }
 
   void showSnackBarText(String text) {
@@ -89,12 +52,6 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
         content: Text(text),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    phoneController.dispose();
-    super.dispose();
   }
 
   @override
@@ -259,20 +216,6 @@ class _LoginPage extends State<LoginPage> with CodeAutoFill {
   }
 
   Widget stateOTP() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SmsAutoFill().code.listen((autoFilledOTP) {
-        if (autoFilledOTP != null && autoFilledOTP.isNotEmpty) {
-          // Automatically fill the OTP
-          setState(() {
-            otpPin = autoFilledOTP;
-          });
-
-          // Proceed with OTP verification
-          verifyOTP();
-        }
-      });
-    });
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

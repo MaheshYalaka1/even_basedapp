@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_contacts/even_createpage.dart';
 import 'package:get_contacts/screens/even_details.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 
 class EventScreenList extends StatefulWidget {
   const EventScreenList({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Maria Birthday',
-      'date': '2024-01-20',
+      'date': '12 may 2024',
       'Place': 'Guntur',
       'time': '3:00 PM',
       'enteredText': 'Happy Birthday maria',
@@ -26,7 +26,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Natalia Graduation',
-      'date': '2024-03-01',
+      'date': '12 july 2024',
       'Place': 'chennai',
       'time': '12:00 PM',
       'enteredText': 'congrats Natalia',
@@ -38,7 +38,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Appointment',
-      'date': '2023-02-16',
+      'date': '17/12/2023',
       'Place': 'Hyderabad',
       'time': '2:30 PM',
       'enteredText': 'Meet with client.',
@@ -47,7 +47,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'tripe araku',
-      'date': '2023-02-15',
+      'date': '28/12/2023',
       'Place': 'vijayawada',
       'time': '10:30 AM',
       'enteredText': 'Discuss project updates.',
@@ -56,7 +56,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'marrage',
-      'date': '2023-02-15',
+      'date': '15/11/2023',
       'Place': 'KPHP colony',
       'time': '10:30 AM',
       'enteredText': 'Discuss project updates.',
@@ -72,9 +72,12 @@ class _EventScreenListState extends State<EventScreenList> {
     });
   }
 
-  void navigateToPage(BuildContext context, String itemName) {
+  Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      FirebaseAuth.instance.signOut();
+      // await FirebaseAuth.instance.signOut();
+      // // After signing out, you may want to navigate to a login or home page.
+      // Navigator.pushReplacementNamed(
+      //     context, '/LoginPage'); // Replace with your route
     } else if (itemName == 'Home Page') {
       // Navigate to another page
       Navigator.push(
@@ -121,7 +124,7 @@ class _EventScreenListState extends State<EventScreenList> {
                 ),
               ];
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.menu,
               size: 30.0,
               color: Colors.black,
@@ -141,27 +144,27 @@ class _EventScreenListState extends State<EventScreenList> {
               textAlign: TextAlign.left,
             ),
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerRight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.all(2.0),
                     child: Row(
                       children: [
-                        Text(
+                        const Text(
                           'Create an event',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 58, 58, 58),
+                            color: Color.fromARGB(255, 58, 58, 58),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(width: 6.0),
+                        const SizedBox(width: 6.0),
                         Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color.fromARGB(
+                            color: const Color.fromARGB(
                                 0, 243, 173, 33), // Circular background color
                             border: Border.all(
                               color: const Color.fromARGB(
@@ -174,9 +177,9 @@ class _EventScreenListState extends State<EventScreenList> {
                             ),
                           ),
                           child: IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.add,
-                              color: const Color.fromARGB(255, 58, 58, 58),
+                              color: Color.fromARGB(255, 58, 58, 58),
                             ),
                             onPressed: () async {
                               _navigateToChatState();
@@ -191,7 +194,7 @@ class _EventScreenListState extends State<EventScreenList> {
             ),
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: events.length,
               itemBuilder: (context, index) {
                 final event = events[index];
@@ -203,7 +206,7 @@ class _EventScreenListState extends State<EventScreenList> {
                       _buildHeader(event),
                     if (event.containsKey('date'))
                       Container(
-                        width: MediaQuery.of(context).size.width - 16,
+                        width: MediaQuery.of(context).size.width - 5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -217,7 +220,7 @@ class _EventScreenListState extends State<EventScreenList> {
                           ],
                         ),
                       ),
-                    if (event.containsKey('date')) Divider(),
+                    if (event.containsKey('date')) const Divider(),
                   ],
                 );
               },
@@ -236,19 +239,19 @@ class _EventScreenListState extends State<EventScreenList> {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             height: event['customHeight'] ?? 200.0,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black), // Add border
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8.0),
                 topRight: Radius.circular(8.0),
               ),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8.0),
                 topRight: Radius.circular(8.0),
               ),
@@ -270,27 +273,31 @@ class _EventScreenListState extends State<EventScreenList> {
                   children: [
                     Text(
                       '${event['category']}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Row(
                       children: [
-                        Icon(Icons.location_on,
-                            size: 18,
-                            color: const Color.fromARGB(255, 37, 38, 39)),
+                        const Icon(Icons.location_on,
+                            size: 18, color: Color.fromARGB(255, 37, 38, 39)),
+                        const SizedBox(
+                          width: 15,
+                        ),
                         Text('${event['Place'] ?? 'Not specified'}'),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
                       children: [
-                        Icon(Icons.calendar_month,
-                            size: 18,
-                            color: const Color.fromARGB(255, 59, 60, 61)),
+                        const Icon(Icons.calendar_month,
+                            size: 18, color: Color.fromARGB(255, 59, 60, 61)),
+                        const SizedBox(
+                          width: 15,
+                        ),
                         Text('${event['date'] ?? 'Not specified'}')
                       ],
                     ),
@@ -300,13 +307,18 @@ class _EventScreenListState extends State<EventScreenList> {
                   onPressed: () {
                     _navigateToEventDetails(event, context);
                   },
-                  child: Text('View', style: TextStyle(fontSize: 11.0)),
+                  child: const Text('View',
+                      style: TextStyle(fontSize: 11.0, color: Colors.black)),
                   style: ElevatedButton.styleFrom(
-                    primary: Color.fromARGB(189, 210, 248, 43),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    primary: Color.fromARGB(239, 248, 217, 43),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(
+                        color: Colors.black, // Set the border color
+                        width: 1.0, // Set the border width
+                      ),
                     ),
                   ),
                 ),
@@ -332,7 +344,7 @@ class _EventScreenListState extends State<EventScreenList> {
         ),
         title: Text(
           '${event['category']}',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
           ),
@@ -341,6 +353,9 @@ class _EventScreenListState extends State<EventScreenList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${event['Place']}'),
+            const SizedBox(
+              height: 5,
+            ),
             Text('${event['date']}'),
           ],
         ),
@@ -348,12 +363,18 @@ class _EventScreenListState extends State<EventScreenList> {
           onPressed: () {
             _navigateToEventDetails(event, context);
           },
-          child: Text('View', style: TextStyle(fontSize: 11.0)),
+          child: const Text('View',
+              style: TextStyle(fontSize: 11.0, color: Colors.black)),
           style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(189, 210, 248, 43),
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            primary: Color.fromARGB(239, 248, 217, 43),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
+              side: BorderSide(
+                color: Colors.black, // Set the border color
+                width: 1.5, // Set the border width
+              ),
             ),
           ),
         ),
@@ -366,7 +387,7 @@ class _EventScreenListState extends State<EventScreenList> {
       padding: const EdgeInsets.all(16.0),
       child: Text(
         event['category'] ?? '',
-        style: TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16.0,
         ),

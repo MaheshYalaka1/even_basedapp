@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/screens/sending_options.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -45,6 +47,28 @@ class _MyHomePageState extends State<MyHomePage> {
   String? locationError;
   String? textError;
 
+  bool isMenuOpen = false;
+
+  void toggleMenu() {
+    setState(() {
+      isMenuOpen = !isMenuOpen;
+    });
+  }
+
+  void navigateToPage(BuildContext context, String itemName) {
+    if (itemName == 'Sign out') {
+      FirebaseAuth.instance.signOut();
+    } else if (itemName == 'Home Page') {
+      // Navigate to another page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const EventScreenList()),
+      );
+    } else {
+      print('Selected: $itemName');
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -68,9 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
       locationError =
           locationController.text.isEmpty ? 'Please enter Location' : null;
 
-      textError = textController.text.isEmpty
-          ? 'Please enter Text (3-1000 characters)'
-          : null;
+      textError =
+          textController.text.isEmpty ? 'pls enter Event remarks' : null;
     });
 
     if (firstNameError == null && locationError == null && textError == null) {
@@ -92,11 +115,51 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          '',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: const Color.fromARGB(
+          255,
+          248,
+          249,
+          250,
+        ), // Set your desired background color
+        actions: [
+          PopupMenuButton(
+            onSelected: (value) {
+              navigateToPage(context, value);
+            },
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  value: 'Sign out',
+                  child: Text('Sign out'),
+                ),
+                const PopupMenuItem(
+                  value: 'Home Page',
+                  child: Text('Home Page'),
+                ),
+                const PopupMenuItem(
+                  value: 'details',
+                  child: Text('details'),
+                ),
+              ];
+            },
+            icon: const Icon(
+              Icons.menu,
+              size: 30.0,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(40.0),
+          padding: const EdgeInsets.symmetric(horizontal: 35),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
@@ -183,8 +246,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 maxLines: null,
                 controller: textController,
                 decoration: InputDecoration(
-                  labelText: 'Enter text (3-1000 characters)',
-                  border: OutlineInputBorder(),
+                  labelText: 'Event Remarks',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
                   errorText: textError,
                 ),
               ),
@@ -257,8 +322,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: _validateAndSubmit,
                         style: ElevatedButton.styleFrom(
                           primary: Color.fromARGB(255, 241, 195, 46),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the radius as needed
+                          ),
+                          side: BorderSide(
+                            color: Colors.black, // Set the border color
+                            width: 1.5, // Set the border width
+                          ),
+                          minimumSize: Size(
+                              double.infinity, 50.0), // Set the button height
                         ),
-                        child: Text('Submit & Create Invitation'),
+                        child: const Text(
+                          'Submit & Create Invitation',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
                   ),
