@@ -134,24 +134,35 @@ class _SignUpPage extends State<SignUpPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(210, 243, 170,
+                            33), // Set your desired button color here
                         shadowColor: Colors.black,
+                        minimumSize: Size(400, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide(
+                            color: Colors
+                                .black, // Set your desired border color here
+                            width: 2.0, // Set your desired border width here
+                          ),
+                        ),
                       ),
                       child: screenState == 0
                           ? isRegistrationLoading
                               ? CircularProgressIndicator()
                               : const Text(
-                                  "Continue",
+                                  "Sign UP",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 26, 26, 26),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 )
                           : isOTPLoading
                               ? CircularProgressIndicator()
                               : const Text(
-                                  "Continue",
+                                  "Verify",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 34, 34, 34),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -160,7 +171,10 @@ class _SignUpPage extends State<SignUpPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account?"),
+                          SizedBox(
+                            height: 107,
+                          ),
+                          Text("Already have account?"),
                           SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
@@ -172,9 +186,9 @@ class _SignUpPage extends State<SignUpPage> {
                               );
                             },
                             child: Text(
-                              "Sign up",
+                              "Go hear",
                               style: TextStyle(
-                                color: Color.fromARGB(241, 71, 101, 250),
+                                color: Color.fromARGB(255, 243, 103, 33),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -227,11 +241,28 @@ class _SignUpPage extends State<SignUpPage> {
           decoration: InputDecoration(
             hintText: 'Enter your first name',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(
+                    255, 19, 19, 19), // Set your desired border color here
+                width: 10.0, // Set your desired border width here
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            // focusedBorder: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(15),
+            //   borderSide: BorderSide(
+            //     color: Colors.blue, // Set your desired border color here
+            //     width: 2.0, // Set your desired border width here
+            //   ),
+            // ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           ),
         ),
+        SizedBox(
+          height: 12,
+        ),
+
         const Text(
           "Middle Name",
           style: TextStyle(
@@ -247,7 +278,16 @@ class _SignUpPage extends State<SignUpPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 25, 25, 25), // Set your desired border color here
+                width: 1.5, // Set your desired border width here
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
         ),
         const SizedBox(height: 12),
@@ -266,7 +306,16 @@ class _SignUpPage extends State<SignUpPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 25, 25, 25), // Set your desired border color here
+                width: 1.5, // Set your desired border width here
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
         ),
         const SizedBox(height: 12),
@@ -286,7 +335,16 @@ class _SignUpPage extends State<SignUpPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 25, 25, 25), // Set your desired border color here
+                width: 1.5, // Set your desired border width here
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
         ),
         const SizedBox(height: 16),
@@ -313,7 +371,16 @@ class _SignUpPage extends State<SignUpPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 25, 25, 25), // Set your desired border color here
+                width: 1.5, // Set your desired border width here
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
         ),
       ],
@@ -349,7 +416,7 @@ class _SignUpPage extends State<SignUpPage> {
               TextSpan(
                 text: "\n$countryDial${phoneController.text}",
                 style: const TextStyle(
-                  color: Colors.black45,
+                  color: Color.fromARGB(225, 28, 27, 27),
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -392,10 +459,10 @@ class _SignUpPage extends State<SignUpPage> {
                     screenState = 0;
                   });
                 },
-                child: Text(
+                child: const Text(
                   'Resend',
                   style: TextStyle(
-                    color: primaryColor,
+                    color: Color.fromARGB(255, 243, 103, 33),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

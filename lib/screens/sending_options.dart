@@ -114,13 +114,13 @@ class _ContactsPageState extends State<ContactsPage> {
             icon: const Icon(
               Icons.menu,
               size: 30.0,
-              color: Color.fromARGB(220, 250, 247, 247),
+              color: Color.fromARGB(235, 254, 254, 254),
             ),
           ),
         ],
       ),
       backgroundColor:
-          const Color.fromARGB(212, 223, 169, 249), // Set the background color
+          Color.fromARGB(255, 253, 249, 255), // Set the background color
 
       body: _isLoadingContacts
           ? const Center(child: CircularProgressIndicator())

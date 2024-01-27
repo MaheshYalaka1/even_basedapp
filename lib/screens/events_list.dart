@@ -18,8 +18,8 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Maria Birthday',
-      'date': '12 may 2024',
-      'Place': 'Guntur',
+      'date': '27 jan 2024',
+      'Place': 'Hyderabad',
       'time': '3:00 PM',
       'enteredText': 'Happy Birthday maria',
       'imagePath': 'assets/splash4.jpg',
@@ -27,7 +27,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Natalia Graduation',
-      'date': '12 july 2024',
+      'date': '30 jan 2024',
       'Place': 'chennai',
       'time': '12:00 PM',
       'enteredText': 'congrats Natalia',
@@ -145,7 +145,7 @@ class _EventScreenListState extends State<EventScreenList> {
         child: Column(
           children: [
             const Text(
-              'Welcome jane',
+              'Welcome Veera',
               style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,

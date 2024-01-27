@@ -96,7 +96,7 @@ class _LoginPage extends State<LoginPage> {
                 child: Column(
                   children: [
                     screenState == 0 ? stateRegister() : stateOTP(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
                         if (screenState == 0) {
@@ -135,24 +135,35 @@ class _LoginPage extends State<LoginPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(210, 243, 170,
+                            33), // Set your desired button color here
                         shadowColor: Colors.black,
+                        minimumSize: Size(400, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide(
+                            color: Colors
+                                .black, // Set your desired border color here
+                            width: 2.0, // Set your desired border width here
+                          ),
+                        ),
                       ),
                       child: screenState == 0
                           ? isRegistrationLoading
                               ? CircularProgressIndicator()
                               : const Text(
-                                  "Continue",
+                                  "Sign in >",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 26, 26, 26),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 )
                           : isOTPLoading
                               ? CircularProgressIndicator()
                               : const Text(
-                                  "Continue",
+                                  "Verify",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 34, 34, 34),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -161,7 +172,10 @@ class _LoginPage extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account?"),
+                          SizedBox(
+                            height: 147,
+                          ),
+                          Text("You are new?"),
                           SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
@@ -173,9 +187,9 @@ class _LoginPage extends State<LoginPage> {
                               );
                             },
                             child: Text(
-                              "Sign up",
+                              "Create new",
                               style: TextStyle(
-                                color: Color.fromARGB(241, 71, 101, 250),
+                                color: Color.fromARGB(240, 250, 107, 71),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -218,20 +232,39 @@ class _LoginPage extends State<LoginPage> {
             });
           },
           decoration: InputDecoration(
-            labelText: 'phone number',
+            labelText: 'Phone number',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(15),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 25, 25, 25), // Set your desired border color here
+                width: 1.5, // Set your desired border width here
+              ),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           ),
         ),
         TextFormField(
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'Password',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius:
+                  BorderRadius.circular(15), // Increase the border radius
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: const Color.fromARGB(
+                    255, 21, 21, 21), // Set your desired border color here
+                width: 3.0, // Set your desired border width here
+              ),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           ),
           obscureText: true,
         )
@@ -248,7 +281,7 @@ class _LoginPage extends State<LoginPage> {
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 25,
           ),
         ),
         const SizedBox(
@@ -313,7 +346,7 @@ class _LoginPage extends State<LoginPage> {
                 child: Text(
                   'Resend',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Color.fromARGB(255, 243, 103, 33),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

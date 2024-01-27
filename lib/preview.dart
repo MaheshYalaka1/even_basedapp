@@ -25,72 +25,75 @@ class OtherPage extends StatelessWidget {
         title: Text('Other Page'),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Create Invitation',
-              style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.left,
-            ),
-            const Text(
-              'Create a new video invitation which can be shared with your family & friends',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
-              textAlign: TextAlign.left,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (var i = 0; i < images.length; i++)
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      margin: const EdgeInsets.all(50),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: images[i],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Perform the action for the first button
-                  },
-                  child: Text('Save'),
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Create Invitation',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to another page when the second button is clicked
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ContactsPage(
-                          eventTitle: eventTitle,
-                          eventType: eventType,
-                          eventDate: eventDate,
-                          location: location,
-                          enteredText: enteredText,
+                textAlign: TextAlign.left,
+              ),
+              const Text(
+                'Create a new video invitation which can be shared with your family & friends',
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (var i = 0; i < images.length; i++)
+                      Container(
+                        height: 500, //MediaQuery.of(context).size.height * 0.5,
+                        width: 350, //MediaQuery.of(context).size.width * 0.5,
+                        margin: const EdgeInsets.all(10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: images[i],
                         ),
                       ),
-                    );
-                  },
-                  child: Text('Preview & Next'),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Perform the action for the first button
+                    },
+                    child: Text('Save'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to another page when the second button is clicked
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ContactsPage(
+                            eventTitle: eventTitle,
+                            eventType: eventType,
+                            eventDate: eventDate,
+                            location: location,
+                            enteredText: enteredText,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text('Preview & Next'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
