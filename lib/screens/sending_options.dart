@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:get_contacts/login.dart';
 import 'package:get_contacts/screens/events_list.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -49,9 +50,13 @@ class _ContactsPageState extends State<ContactsPage> {
     });
   }
 
-  void navigateToPage(BuildContext context, String itemName) {
+  Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      FirebaseAuth.instance.signOut();
+      await signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     } else if (itemName == 'Home Page') {
       // Navigate to another page
       Navigator.push(
@@ -61,6 +66,12 @@ class _ContactsPageState extends State<ContactsPage> {
     } else {
       print('Selected: $itemName');
     }
+  }
+
+  Future<void> signOut() async {
+    // Clear the login status in shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
   }
 
   @override
@@ -73,7 +84,12 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contacts List'),
+        title: const Text(
+          '',
+          style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
+        ),
+        backgroundColor: Color.fromARGB(
+            255, 27, 27, 28), // Set your desired background color
         actions: [
           PopupMenuButton(
             onSelected: (value) {
@@ -90,15 +106,15 @@ class _ContactsPageState extends State<ContactsPage> {
                   child: Text('Home Page'),
                 ),
                 const PopupMenuItem(
-                  value: 'item3',
-                  child: Text('Item 3'),
+                  value: 'details',
+                  child: Text('details'),
                 ),
               ];
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.menu,
               size: 30.0,
-              color: Colors.black,
+              color: Color.fromARGB(220, 250, 247, 247),
             ),
           ),
         ],

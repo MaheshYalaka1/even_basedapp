@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_contacts/screens/events_list.dart';
+import 'package:get_contacts/Login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -20,9 +21,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     });
   }
 
-  void navigateToPage(BuildContext context, String itemName) {
+  Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      FirebaseAuth.instance.signOut();
+      // Perform sign-out and navigate to the login page
+      await signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     } else if (itemName == 'Home Page') {
       // Navigate to another page
       Navigator.push(
@@ -34,11 +40,22 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
   }
 
+  Future<void> signOut() async {
+    // Clear the login status in shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Event Details'),
+        title: const Text(
+          '',
+          style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
+        ),
+        backgroundColor: Color.fromARGB(
+            255, 27, 27, 28), // Set your desired background color
         actions: [
           PopupMenuButton(
             onSelected: (value) {
@@ -60,10 +77,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 ),
               ];
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.menu,
               size: 30.0,
-              color: Colors.black,
+              color: Color.fromARGB(220, 250, 247, 247),
             ),
           ),
         ],

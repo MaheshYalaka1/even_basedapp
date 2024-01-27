@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:get_contacts/login.dart';
+import 'package:get_contacts/screens/events_list.dart';
 
 void main() async {
   runApp(MyApp());
@@ -41,9 +41,22 @@ class _SplashScreenState extends State<SplashScreen> {
   PageController _pageController = PageController();
   int _currentPage = 0;
 
+  bool isLoggedIn = false; // Add this variable to track login status
+
   @override
   void initState() {
     super.initState();
+    // Check the login status when the splash screen initializes
+    checkLoginStatus();
+  }
+
+  // Method to check the login status
+  void checkLoginStatus() {
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoggedIn = false; // Change this to true if the user is logged in
+      });
+    });
   }
 
   _nextPage() {
@@ -56,11 +69,17 @@ class _SplashScreenState extends State<SplashScreen> {
         _currentPage++;
       });
     } else {
-      // Navigate to the LoginPage after showing all splash screens
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
+      if (isLoggedIn) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const EventScreenList()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
     }
   }
 

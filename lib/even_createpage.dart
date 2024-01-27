@@ -1,11 +1,12 @@
 import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_contacts/login.dart';
+import 'package:get_contacts/preview.dart';
 import 'package:get_contacts/screens/events_list.dart';
-import 'package:get_contacts/screens/sending_options.dart';
+
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -55,9 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void navigateToPage(BuildContext context, String itemName) {
+  Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      FirebaseAuth.instance.signOut();
+      // Perform sign-out and navigate to the login page
+      await signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     } else if (itemName == 'Home Page') {
       // Navigate to another page
       Navigator.push(
@@ -67,6 +73,12 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       print('Selected: $itemName');
     }
+  }
+
+  Future<void> signOut() async {
+    // Clear the login status in shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -100,12 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ContactsPage(
+          builder: (context) => OtherPage(
             eventTitle: firstNameController.text,
             eventType: selectedEvent,
             eventDate: selectedDate,
             location: locationController.text,
             enteredText: textController.text,
+            images: images,
           ),
         ),
       );
@@ -118,14 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text(
           '',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
         ),
-        backgroundColor: const Color.fromARGB(
-          255,
-          248,
-          249,
-          250,
-        ), // Set your desired background color
+        backgroundColor: Color.fromARGB(
+            255, 27, 27, 28), // Set your desired background color
         actions: [
           PopupMenuButton(
             onSelected: (value) {
@@ -150,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(
               Icons.menu,
               size: 30.0,
-              color: Colors.black,
+              color: Color.fromARGB(220, 250, 247, 247),
             ),
           ),
         ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_contacts/even_createpage.dart';
+import 'package:get_contacts/login.dart';
 import 'package:get_contacts/screens/even_details.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventScreenList extends StatefulWidget {
   const EventScreenList({Key? key}) : super(key: key);
@@ -74,10 +75,12 @@ class _EventScreenListState extends State<EventScreenList> {
 
   Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      // await FirebaseAuth.instance.signOut();
-      // // After signing out, you may want to navigate to a login or home page.
-      // Navigator.pushReplacementNamed(
-      //     context, '/LoginPage'); // Replace with your route
+      // Perform sign-out and navigate to the login page
+      await signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     } else if (itemName == 'Home Page') {
       // Navigate to another page
       Navigator.push(
@@ -87,6 +90,12 @@ class _EventScreenListState extends State<EventScreenList> {
     } else {
       print('Selected: $itemName');
     }
+  }
+
+  Future<void> signOut() async {
+    // Clear the login status in shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
   }
 
   @override
@@ -352,6 +361,7 @@ class _EventScreenListState extends State<EventScreenList> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8),
             Text('${event['Place']}'),
             const SizedBox(
               height: 5,

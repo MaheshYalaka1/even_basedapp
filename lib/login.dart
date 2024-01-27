@@ -3,6 +3,7 @@ import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/signUp.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,6 +24,26 @@ class _LoginPage extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    checkLoginStatus();
+  }
+
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      // User is already logged in, navigate to the home page
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const EventScreenList(),
+        ),
+      );
+    }
+  }
+
+  Future<void> setLoginStatus(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
   Future<void> verifyPhone(String number) async {
@@ -37,6 +58,9 @@ class _LoginPage extends State<LoginPage> {
   Future<void> verifyOTP() async {
     // Mock OTP verification process (replace with your desired logic)
     await Future.delayed(Duration(seconds: 2));
+
+    // Set the login status to true
+    await setLoginStatus(true);
 
     // Navigate to the next screen on successful verification
     Navigator.of(context).pushReplacement(

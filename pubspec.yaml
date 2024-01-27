@@ -50,6 +50,7 @@ dependencies:
   sms_autofill: ^2.3.0
   whatsapp_unilink: ^2.1.0
   mailer: ^6.0.1
+  shared_preferences: ^2.2.2
  
  
   

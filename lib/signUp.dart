@@ -3,7 +3,7 @@ import 'package:get_contacts/login.dart';
 import 'package:get_contacts/screens/events_list.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,59 +13,60 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPage extends State<SignUpPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   TextEditingController phoneController = TextEditingController();
   TextEditingController firstName = TextEditingController();
+  TextEditingController MiddleName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   TextEditingController emailID = TextEditingController();
 
-  String verificationId = "";
   String otpPin = "";
   String countryDial = "+1";
   int screenState = 0; // 0 for registration, 1 for OTP
   Color primaryColor = const Color(0xff0074E4);
+  bool isRegistrationLoading = false;
+  bool isOTPLoading = false;
 
-  Future<void> verifyPhone(String number) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: number,
-      timeout: const Duration(seconds: 30),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        showSnackBarText("Authentication complete");
-      },
-      verificationFailed: (e) {
-        showSnackBarText('Error: ${e.code}');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        showSnackBarText("OTP sent!");
-        this.verificationId = verificationId;
-        setState(() {
-          screenState = 1;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        showSnackBarText("TimeOut!");
-      },
-    );
-  }
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-  Future<void> verifyOTP() async {
-    try {
-      await _auth.signInWithCredential(
-        PhoneAuthProvider.credential(
-          verificationId: verificationId,
-          smsCode: otpPin,
-        ),
-      );
-
+    if (isLoggedIn) {
+      // User is already logged in, navigate to the home page
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const EventScreenList(),
         ),
       );
-    } catch (e) {
-      showSnackBarText("Error: Incorrect OTP. Please try again.");
     }
+  }
+
+  Future<void> setLoginStatus(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  Future<void> verifyPhone(String number) async {
+    // Mock verification process (replace with your desired logic)
+    await Future.delayed(Duration(seconds: 2));
+    showSnackBarText("OTP sent!");
+    setState(() {
+      screenState = 1;
+    });
+  }
+
+  Future<void> verifyOTP() async {
+    // Mock OTP verification process (replace with your desired logic)
+    await Future.delayed(Duration(seconds: 2));
+
+    // Set the login status to true
+    await setLoginStatus(true);
+
+    // Navigate to the next screen on successful verification
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const EventScreenList(),
+      ),
+    );
   }
 
   void showSnackBarText(String text) {
@@ -77,72 +78,90 @@ class _SignUpPage extends State<SignUpPage> {
   }
 
   @override
-  void dispose() {
-    phoneController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      screenState == 0 ? stateRegister() : stateOTP(),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (screenState == 0) {
-                            if (phoneController.text.isEmpty) {
-                              showSnackBarText("Phone number is empty!");
-                            } else {
-                              // Uncomment the following line to enable phone number verification
-                              verifyPhone(
-                                  "$countryDial${phoneController.text}");
-                              setState(() {
-                                screenState = 1;
-                              });
-                            }
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    screenState == 0 ? stateRegister() : stateOTP(),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (screenState == 0) {
+                          if (phoneController.text.isEmpty) {
+                            showSnackBarText("Phone number is empty!");
                           } else {
-                            if (otpPin.length >= 6) {
-                              // Uncomment the following line to enable OTP verification
-                              verifyOTP();
-                            } else {
-                              showSnackBarText("Enter OTP correctly");
-                            }
+                            // Set registration loading to true before making the request
+                            setState(() {
+                              isRegistrationLoading = true;
+                            });
+
+                            verifyPhone("${countryDial}${phoneController.text}")
+                                .whenComplete(() {
+                              // Set registration loading to false when the request is complete
+                              setState(() {
+                                isRegistrationLoading = false;
+                              });
+                            });
                           }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: primaryColor,
-                        ),
-                        child: const Text(
-                          "Continue",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
+                        } else {
+                          if (otpPin.length >= 6) {
+                            // Set OTP loading to true before making the request
+                            setState(() {
+                              isOTPLoading = true;
+                            });
+
+                            verifyOTP().whenComplete(() {
+                              // Set OTP loading to false when the request is complete
+                              setState(() {
+                                isOTPLoading = false;
+                              });
+                            });
+                          } else {
+                            showSnackBarText("Enter OTP correctly");
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.black,
                       ),
+                      child: screenState == 0
+                          ? isRegistrationLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                          : isOTPLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                    ),
+                    if (screenState == 0)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("already have an account ?"),
-                          const SizedBox(width: 5),
+                          Text("Don't have an account?"),
+                          SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushReplacement(
@@ -152,21 +171,20 @@ class _SignUpPage extends State<SignUpPage> {
                                 ),
                               );
                             },
-                            child: const Text(
-                              "login",
+                            child: Text(
+                              "Sign up",
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromARGB(241, 71, 101, 250),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -223,7 +241,7 @@ class _SignUpPage extends State<SignUpPage> {
           ),
         ),
         TextField(
-          controller: firstName,
+          controller: MiddleName,
           decoration: InputDecoration(
             hintText: 'Enter your Middle name',
             border: OutlineInputBorder(
@@ -340,10 +358,11 @@ class _SignUpPage extends State<SignUpPage> {
           ),
         ),
         const SizedBox(height: 20),
-        //Uncomment the following line to enable OTP input
+        // Uncomment the following line to enable OTP input
         PinCodeTextField(
           appContext: context,
           length: 6,
+          keyboardType: TextInputType.number,
           onChanged: (value) {
             setState(() {
               otpPin = value;
@@ -353,13 +372,14 @@ class _SignUpPage extends State<SignUpPage> {
             activeColor: primaryColor,
             selectedColor: primaryColor,
             inactiveColor: Colors.black,
+            shape: PinCodeFieldShape.box,
           ),
         ),
         const SizedBox(height: 20),
         RichText(
           text: TextSpan(children: [
             const TextSpan(
-              text: "haen't recieved code yet?",
+              text: "haven't received code yet?",
               style: TextStyle(
                 color: Colors.black38,
                 fontSize: 12,
