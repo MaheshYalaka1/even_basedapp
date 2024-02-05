@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_contacts/dropdown.dart';
 import 'package:get_contacts/even_createpage.dart';
 import 'package:get_contacts/login.dart';
 import 'package:get_contacts/screens/even_details.dart';
@@ -44,7 +45,7 @@ class _EventScreenListState extends State<EventScreenList> {
       'time': '2:30 PM',
       'enteredText': 'Meet with client.',
       'imagePath': 'assets/splash3.jpg',
-      'customHeight': 70.0,
+      // 'customHeight': 90.0,
     },
     {
       'category': 'tripe araku',
@@ -53,7 +54,7 @@ class _EventScreenListState extends State<EventScreenList> {
       'time': '10:30 AM',
       'enteredText': 'Discuss project updates.',
       'imagePath': 'assets/splash2.jpg',
-      'customHeight': 70.0,
+      //'customHeight': 90.0,
     },
     {
       'category': 'marrage',
@@ -62,7 +63,7 @@ class _EventScreenListState extends State<EventScreenList> {
       'time': '10:30 AM',
       'enteredText': 'Discuss project updates.',
       'imagePath': 'assets/splash1.jpg',
-      'customHeight': 70.0,
+      //'customHeight': 90.0,
     }
   ];
   bool isMenuOpen = false;
@@ -106,41 +107,9 @@ class _EventScreenListState extends State<EventScreenList> {
           '',
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: const Color.fromARGB(
-          255,
-          248,
-          249,
-          250,
-        ), // Set your desired background color
-        actions: [
-          PopupMenuButton(
-            onSelected: (value) {
-              navigateToPage(context, value);
-            },
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: 'Sign out',
-                  child: Text('Sign out'),
-                ),
-                const PopupMenuItem(
-                  value: 'Home Page',
-                  child: Text('Home Page'),
-                ),
-                const PopupMenuItem(
-                  value: 'details',
-                  child: Text('details'),
-                ),
-              ];
-            },
-            icon: const Icon(
-              Icons.menu,
-              size: 30.0,
-              color: Colors.black,
-            ),
-          ),
-        ],
+        // Set your desired background color
       ),
+      endDrawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -215,7 +184,7 @@ class _EventScreenListState extends State<EventScreenList> {
                       _buildHeader(event),
                     if (event.containsKey('date'))
                       Container(
-                        width: MediaQuery.of(context).size.width - 5,
+                        width: MediaQuery.of(context).size.width - 7,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -229,7 +198,6 @@ class _EventScreenListState extends State<EventScreenList> {
                           ],
                         ),
                       ),
-                    if (event.containsKey('date')) const Divider(),
                   ],
                 );
               },
@@ -244,7 +212,7 @@ class _EventScreenListState extends State<EventScreenList> {
     return Container(
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Color.fromARGB(255, 32, 31, 31)),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
@@ -341,11 +309,12 @@ class _EventScreenListState extends State<EventScreenList> {
 
   Widget _buildEventAvatar(Map<String, dynamic> event) {
     return Container(
-      height: event['customHeight'] ?? 70.0,
+      height: event['customHeight'] ?? 90.0,
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+            color: const Color.fromARGB(255, 18, 17, 17)), // Border for the box
+        borderRadius: BorderRadius.circular(11.0),
       ),
       child: ListTile(
         leading: CircleAvatar(
@@ -359,12 +328,13 @@ class _EventScreenListState extends State<EventScreenList> {
           ),
         ),
         subtitle: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 8),
+            SizedBox(height: 0),
             Text('${event['Place']}'),
             const SizedBox(
-              height: 5,
+              height: 1,
             ),
             Text('${event['date']}'),
           ],
@@ -382,8 +352,8 @@ class _EventScreenListState extends State<EventScreenList> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
               side: BorderSide(
-                color: Colors.black, // Set the border color
-                width: 1.5, // Set the border width
+                color: Colors.black, // Border for the button
+                width: 1.5, // Border width for the button
               ),
             ),
           ),

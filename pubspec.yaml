@@ -51,6 +51,11 @@ dependencies:
   whatsapp_unilink: ^2.1.0
   mailer: ^6.0.1
   shared_preferences: ^2.2.2
+  geocoding: ^2.1.1
+  geolocator: ^10.1.0
+  flutter_riverpod: ^2.4.9
+  local_auth: ^2.1.8
+  emoji_picker_flutter: ^2.0.0
  
  
   

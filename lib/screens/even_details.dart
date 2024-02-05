@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_contacts/dropdown.dart';
 import 'package:get_contacts/screens/events_list.dart';
 import 'package:get_contacts/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,35 +57,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
         backgroundColor: Color.fromARGB(
             255, 27, 27, 28), // Set your desired background color
-        actions: [
-          PopupMenuButton(
-            onSelected: (value) {
-              navigateToPage(context, value);
-            },
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: 'Sign out',
-                  child: Text('Sign out'),
-                ),
-                const PopupMenuItem(
-                  value: 'Home Page',
-                  child: Text('Home Page'),
-                ),
-                const PopupMenuItem(
-                  value: 'details',
-                  child: Text('details'),
-                ),
-              ];
-            },
-            icon: const Icon(
-              Icons.menu,
-              size: 30.0,
-              color: Color.fromARGB(220, 250, 247, 247),
-            ),
-          ),
-        ],
       ),
+      endDrawer: AppDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -101,7 +75,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

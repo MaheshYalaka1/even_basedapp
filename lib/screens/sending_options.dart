@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:get_contacts/dropdown.dart';
 import 'package:get_contacts/login.dart';
 import 'package:get_contacts/screens/events_list.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -88,37 +89,8 @@ class _ContactsPageState extends State<ContactsPage> {
           '',
           style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
         ),
-        backgroundColor: Color.fromARGB(
-            255, 27, 27, 28), // Set your desired background color
-        actions: [
-          PopupMenuButton(
-            onSelected: (value) {
-              navigateToPage(context, value);
-            },
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: 'Sign out',
-                  child: Text('Sign out'),
-                ),
-                const PopupMenuItem(
-                  value: 'Home Page',
-                  child: Text('Home Page'),
-                ),
-                const PopupMenuItem(
-                  value: 'details',
-                  child: Text('details'),
-                ),
-              ];
-            },
-            icon: const Icon(
-              Icons.menu,
-              size: 30.0,
-              color: Color.fromARGB(235, 254, 254, 254),
-            ),
-          ),
-        ],
       ),
+      endDrawer: AppDrawer(),
       backgroundColor:
           Color.fromARGB(255, 253, 249, 255), // Set the background color
 

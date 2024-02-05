@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_contacts/dropdown.dart';
 import 'package:get_contacts/screens/sending_options.dart';
 
 class OtherPage extends StatelessWidget {
@@ -24,6 +25,7 @@ class OtherPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Other Page'),
       ),
+      endDrawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(18.0),

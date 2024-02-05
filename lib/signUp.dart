@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_contacts/login.dart';
-import 'package:get_contacts/screens/events_list.dart';
+//import 'package:get_contacts/screens/events_list.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -25,25 +25,11 @@ class _SignUpPage extends State<SignUpPage> {
   Color primaryColor = const Color(0xff0074E4);
   bool isRegistrationLoading = false;
   bool isOTPLoading = false;
-
-  Future<void> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-    if (isLoggedIn) {
-      // User is already logged in, navigate to the home page
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const EventScreenList(),
-        ),
-      );
-    }
-  }
-
-  Future<void> setLoginStatus(bool isLoggedIn) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', isLoggedIn);
-  }
+  String? firstNameError;
+  String? middleNameError;
+  String? lastNameError;
+  String? emailIdError;
+  String? phoneNumbererror;
 
   Future<void> verifyPhone(String number) async {
     // Mock verification process (replace with your desired logic)
@@ -54,17 +40,42 @@ class _SignUpPage extends State<SignUpPage> {
     });
   }
 
+  bool validateTextField(TextEditingController controller, String? errorText,
+      {int minLength = 1}) {
+    if (controller.text.trim().isEmpty || controller.text.length < minLength) {
+      setState(() {
+        errorText = "This field cannot be empty or too short";
+      });
+      return false;
+    }
+    setState(() {
+      errorText = null;
+    });
+    return true;
+  }
+
+  bool validateEmailFormat(String email) {
+    String emailPattern = r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$';
+    RegExp regex = RegExp(emailPattern);
+    if (!regex.hasMatch(email)) {
+      setState(() {
+        emailIdError = "Enter a valid email address";
+      });
+      return false;
+    }
+    setState(() {
+      emailIdError = null;
+    });
+    return true;
+  }
+
   Future<void> verifyOTP() async {
     // Mock OTP verification process (replace with your desired logic)
     await Future.delayed(Duration(seconds: 2));
 
-    // Set the login status to true
-    await setLoginStatus(true);
-
-    // Navigate to the next screen on successful verification
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => const EventScreenList(),
+        builder: (context) => const LoginPage(),
       ),
     );
   }
@@ -99,8 +110,40 @@ class _SignUpPage extends State<SignUpPage> {
                     ElevatedButton(
                       onPressed: () {
                         if (screenState == 0) {
-                          if (phoneController.text.isEmpty) {
-                            showSnackBarText("Phone number is empty!");
+                          setState(() {
+                            firstNameError = firstName.text.isEmpty
+                                ? 'Please enter first name'
+                                : null;
+
+                            lastNameError = lastName.text.isEmpty
+                                ? 'Please enter last name'
+                                : null;
+
+                            middleNameError = MiddleName.text.isEmpty
+                                ? 'pls enter middle name'
+                                : null;
+                            phoneNumbererror = phoneController.text.isEmpty
+                                ? 'pls enter a valid number'
+                                : null;
+                            emailIdError = emailID.text.isEmpty
+                                ? 'Please enter email address'
+                                : null;
+
+                            // Additional check for valid email format
+                            if (emailIdError == null &&
+                                !validateEmailFormat(emailID.text)) {
+                              emailIdError =
+                                  'Please enter a valid email address';
+                            }
+                          });
+                          if (firstName.text.isEmpty ||
+                              lastName.text.isEmpty ||
+                              MiddleName.text.isEmpty ||
+                              phoneController.text.isEmpty ||
+                              emailID.text.isEmpty ||
+                              emailIdError != null) {
+                            // Handle the case where any of the fields is empty or email is invalid
+                            // You may show a message or perform some action
                           } else {
                             // Set registration loading to true before making the request
                             setState(() {
@@ -248,13 +291,7 @@ class _SignUpPage extends State<SignUpPage> {
                 width: 10.0, // Set your desired border width here
               ),
             ),
-            // focusedBorder: OutlineInputBorder(
-            //   borderRadius: BorderRadius.circular(15),
-            //   borderSide: BorderSide(
-            //     color: Colors.blue, // Set your desired border color here
-            //     width: 2.0, // Set your desired border width here
-            //   ),
-            // ),
+            errorText: firstNameError,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           ),
@@ -286,6 +323,7 @@ class _SignUpPage extends State<SignUpPage> {
                 width: 1.5, // Set your desired border width here
               ),
             ),
+            errorText: middleNameError,
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
@@ -314,6 +352,7 @@ class _SignUpPage extends State<SignUpPage> {
                 width: 1.5, // Set your desired border width here
               ),
             ),
+            errorText: lastNameError,
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
@@ -343,6 +382,7 @@ class _SignUpPage extends State<SignUpPage> {
                 width: 1.5, // Set your desired border width here
               ),
             ),
+            errorText: emailIdError,
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),
@@ -379,6 +419,7 @@ class _SignUpPage extends State<SignUpPage> {
                 width: 1.5, // Set your desired border width here
               ),
             ),
+            errorText: phoneNumbererror,
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 20), // Adjust the vertical padding
           ),

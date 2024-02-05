@@ -17,7 +17,10 @@ class _shoppingPage extends State<shoppingPage> {
   }
 
   Future<void> fetchFinalResult() async {
+
+
     final url = Uri.parse(
+      
         "http://iphone.us2guntur.com/SubcatResponseNewV15?catid=10008");
     final response = await http.get(url);
 

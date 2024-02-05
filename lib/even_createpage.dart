@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_contacts/dropdown.dart';
 import 'package:get_contacts/login.dart';
 import 'package:get_contacts/preview.dart';
 import 'package:get_contacts/screens/events_list.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -18,9 +23,19 @@ class _MyHomePageState extends State<MyHomePage> {
   final ImagePicker _imagePicker = ImagePicker();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-  TextEditingController textController = TextEditingController();
+  // TextEditingController textController = TextEditingController();
   String selectedEvent = 'Celestial Soiree'; // Dropdown default value
   DateTime selectedDate = DateTime.now(); // Date picker default value
+  final _controller = TextEditingController();
+  final _scrollController = ScrollController();
+  bool _emojiShowing = false;
+
+  String address = 'Address: ';
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> _getImageFromSource(ImageSource source) async {
     final XFile? pickedFile = await _imagePicker.pickImage(source: source);
@@ -104,8 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
       locationError =
           locationController.text.isEmpty ? 'Please enter Location' : null;
 
-      textError =
-          textController.text.isEmpty ? 'pls enter Event remarks' : null;
+      textError = _controller.text.isEmpty ? 'pls enter Event remarks' : null;
     });
 
     if (firstNameError == null && locationError == null && textError == null) {
@@ -117,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             eventType: selectedEvent,
             eventDate: selectedDate,
             location: locationController.text,
-            enteredText: textController.text,
+            enteredText: _controller.text,
             images: images,
           ),
         ),
@@ -133,225 +147,262 @@ class _MyHomePageState extends State<MyHomePage> {
           '',
           style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
         ),
-        backgroundColor: Color.fromARGB(
-            255, 27, 27, 28), // Set your desired background color
-        actions: [
-          PopupMenuButton(
-            onSelected: (value) {
-              navigateToPage(context, value);
-            },
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: 'Sign out',
-                  child: Text('Sign out'),
-                ),
-                const PopupMenuItem(
-                  value: 'Home Page',
-                  child: Text('Home Page'),
-                ),
-                const PopupMenuItem(
-                  value: 'details',
-                  child: Text('details'),
-                ),
-              ];
-            },
-            icon: const Icon(
-              Icons.menu,
-              size: 30.0,
-              color: Color.fromARGB(220, 250, 247, 247),
-            ),
-          ),
-        ],
+        // Set your desired background color
       ),
-      body: SingleChildScrollView(
+      endDrawer: AppDrawer(),
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 35),
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'New event',
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-              const Text(
-                'You can create your own invitation video for your event if you want to',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-                textAlign: TextAlign.left,
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: firstNameController,
-                decoration: InputDecoration(
-                  labelText: 'Event Title',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(11.0),
+          child: SingleChildScrollView(
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'New event',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  errorText: firstNameError,
+                  textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(height: 10.0),
-              DropdownButtonFormField<String>(
-                value: selectedEvent,
-                decoration: InputDecoration(
-                  labelText: 'Event Type',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                const Text(
+                  'You can create your own invitation video for your event if you want to',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 20.0),
+                TextField(
+                  controller: firstNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Event Title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(11.0),
+                    ),
+                    errorText: firstNameError,
                   ),
                 ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedEvent = newValue!;
-                  });
-                },
-                items: eventList.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                readOnly: true,
-                controller: TextEditingController(
-                  text: "${selectedDate.toLocal()}".split(' ')[0],
-                ),
-                decoration: InputDecoration(
-                  labelText: 'Event Date',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                SizedBox(height: 10.0),
+                DropdownButtonFormField<String>(
+                  value: selectedEvent,
+                  decoration: InputDecoration(
+                    labelText: 'Event Type',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedEvent = newValue!;
+                    });
+                  },
+                  items:
+                      eventList.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
-                onTap: () => _selectDate(context),
-              ),
-              SizedBox(height: 10.0),
-              TextField(
-                controller: locationController,
-                decoration: InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                SizedBox(height: 10.0),
+                TextFormField(
+                  readOnly: true,
+                  controller: TextEditingController(
+                    text: "${selectedDate.toLocal()}".split(' ')[0],
                   ),
-                  errorText: locationError,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                maxLength: 1000,
-                maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                minLines: 3,
-                maxLines: null,
-                controller: textController,
-                decoration: InputDecoration(
-                  labelText: 'Event Remarks',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                  decoration: InputDecoration(
+                    labelText: 'Event Date',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                    ),
                   ),
-                  errorText: textError,
+                  onTap: () => _selectDate(context),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: GestureDetector(
-                      onTap: () async {
-                        if (images.isEmpty) {
-                          await _getImageFromSource(ImageSource.gallery);
-                        }
+                SizedBox(height: 10.0),
+                TextField(
+                  controller: locationController,
+                  decoration: InputDecoration(
+                    labelText: 'Location',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.location_on),
+                      onPressed: () {
+                        _getCurrentLocation();
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color.fromARGB(132, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        height: 150,
-                        width: 280, // Adjust this value to increase the height
-                        child: Center(
-                          child: images.isEmpty
-                              ? Text(
-                                  'Select Images',
-                                  style: TextStyle(fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                )
-                              : SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      for (var i = 0; i < images.length; i++)
-                                        GestureDetector(
-                                          onTap: () {
-                                            _viewImage(images[i], i);
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.all(4),
-                                            child: images[i],
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                        ),
-                      ),
                     ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    errorText: locationError,
                   ),
-                  if (images.isNotEmpty)
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: FloatingActionButton(
-                        onPressed: () async {
-                          await _getImageFromSource(ImageSource.gallery);
+                ),
+                Column(
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: GestureDetector(
+                        onTap: () async {
+                          if (images.isEmpty) {
+                            await _getImageFromSource(ImageSource.gallery);
+                          }
                         },
-                        child: Icon(Icons.add),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color.fromARGB(132, 0, 0, 0),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          height: 150,
+                          width:
+                              280, // Adjust this value to increase the height
+                          child: Center(
+                            child: images.isEmpty
+                                ? Text(
+                                    'Select Images',
+                                    style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.center,
+                                  )
+                                : SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        for (var i = 0; i < images.length; i++)
+                                          GestureDetector(
+                                            onTap: () {
+                                              _viewImage(images[i], i);
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.all(4),
+                                              child: images[i],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ),
                     ),
-                  const SizedBox(height: 20.0),
-                  Center(
-                    child: Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _validateAndSubmit,
-                        style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(255, 241, 195, 46),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                10.0), // Adjust the radius as needed
-                          ),
-                          side: BorderSide(
-                            color: Colors.black, // Set the border color
-                            width: 1.5, // Set the border width
-                          ),
-                          minimumSize: Size(
-                              double.infinity, 50.0), // Set the button height
+                    if (images.isNotEmpty)
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: FloatingActionButton(
+                          onPressed: () async {
+                            await _getImageFromSource(ImageSource.gallery);
+                          },
+                          child: Icon(Icons.add),
                         ),
-                        child: const Text(
-                          'Submit & Create Invitation',
-                          style: TextStyle(color: Colors.black),
+                      ),
+                    Container(
+                        height: 66.0,
+                        color: Color.fromARGB(255, 230, 233, 236),
+                        child: Row(
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _emojiShowing = !_emojiShowing;
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.emoji_emotions,
+                                  color: Color.fromARGB(255, 31, 30, 30),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: TextField(
+                                    controller: _controller,
+                                    scrollController: _scrollController,
+                                    style: const TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.black87,
+                                    ),
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                      hintText: 'Event Remarks',
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      contentPadding: const EdgeInsets.only(
+                                        left: 16.0,
+                                        bottom: 8.0,
+                                        top: 8.0,
+                                        right: 16.0,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                      ),
+                                    )),
+                              ),
+                            ),
+                          ],
+                        )),
+                    Offstage(
+                      offstage: !_emojiShowing,
+                      child: EmojiPicker(
+                        textEditingController: _controller,
+                        scrollController: _scrollController,
+                        config: Config(
+                          height: 256,
+                          checkPlatformCompatibility: true,
+                          emojiViewConfig: EmojiViewConfig(
+                            emojiSizeMax: 28 *
+                                (foundation.defaultTargetPlatform ==
+                                        TargetPlatform.iOS
+                                    ? 1.2
+                                    : 1.0),
+                          ),
+                          swapCategoryAndBottomBar: false,
+                          skinToneConfig: const SkinToneConfig(),
+                          categoryViewConfig: const CategoryViewConfig(),
+                          bottomActionBarConfig: const BottomActionBarConfig(),
+                          searchViewConfig: const SearchViewConfig(),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                Center(
+                  child: Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _validateAndSubmit,
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 241, 195, 46),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        side: BorderSide(
+                          color: Colors.black,
+                          width: 1.5,
+                        ),
+                        minimumSize: Size(double.infinity, 50.0),
+                      ),
+                      child: const Text(
+                        'Submit & Create Invitation',
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -378,9 +429,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         _removeImage(index);
                         Navigator.pop(context);
                       },
-                      child: Text('Remove'),
+                      child: const Text('Remove'),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: () async {
                         await _replaceImage(index);
@@ -412,6 +463,64 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         images[index] = Image.file(File(pickedFile.path));
       });
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check and request location permissions
+      await _checkLocationPermission();
+
+      // Get the current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+
+      await _getAddress(position.latitude, position.longitude);
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+
+  Future<void> _getAddress(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark addressPlacemark = placemarks[0];
+        String formattedAddress =
+            '${addressPlacemark.street},${addressPlacemark.subLocality}, ${addressPlacemark.locality},${addressPlacemark.administrativeArea},${addressPlacemark.postalCode}, ${addressPlacemark.country}';
+        print(formattedAddress);
+
+        setState(() {
+          locationController.text = formattedAddress;
+          address = formattedAddress;
+        });
+      } else {
+        print('No address found for the provided coordinates.');
+        setState(() {
+          locationController.text = 'No address found';
+          address = 'No address found';
+        });
+      }
+    } catch (e) {
+      print('Error getting address: $e');
+      setState(() {
+        locationController.text = 'Error getting address';
+        address = 'Error getting address';
+      });
+    }
+  }
+
+  Future<void> _checkLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status != PermissionStatus.granted) {
+      await Permission.location.request();
     }
   }
 }
