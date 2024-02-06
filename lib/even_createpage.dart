@@ -1,17 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get_contacts/dropdown.dart';
-import 'package:get_contacts/login.dart';
-import 'package:get_contacts/preview.dart';
-import 'package:get_contacts/screens/events_list.dart';
+
+import 'package:EventBasedapp/dropdown.dart';
+import 'package:EventBasedapp/login.dart';
+import 'package:EventBasedapp/preview.dart';
+import 'package:EventBasedapp/screens/events_list.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/foundation.dart' as foundation;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -26,14 +25,14 @@ class _MyHomePageState extends State<MyHomePage> {
   // TextEditingController textController = TextEditingController();
   String selectedEvent = 'Celestial Soiree'; // Dropdown default value
   DateTime selectedDate = DateTime.now(); // Date picker default value
-  final _controller = TextEditingController();
+  final textController = TextEditingController();
   final _scrollController = ScrollController();
   bool _emojiShowing = false;
 
   String address = 'Address: ';
   @override
   void dispose() {
-    _controller.dispose();
+    textController.dispose();
     super.dispose();
   }
 
@@ -73,7 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> navigateToPage(BuildContext context, String itemName) async {
     if (itemName == 'Sign out') {
-      // Perform sign-out and navigate to the login page
       await signOut();
       Navigator.pushReplacement(
         context,
@@ -119,7 +117,8 @@ class _MyHomePageState extends State<MyHomePage> {
       locationError =
           locationController.text.isEmpty ? 'Please enter Location' : null;
 
-      textError = _controller.text.isEmpty ? 'pls enter Event remarks' : null;
+      textError =
+          textController.text.isEmpty ? 'pls enter Event remarks' : null;
     });
 
     if (firstNameError == null && locationError == null && textError == null) {
@@ -131,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
             eventType: selectedEvent,
             eventDate: selectedDate,
             location: locationController.text,
-            enteredText: _controller.text,
+            enteredText: textController.text,
             images: images,
           ),
         ),
@@ -241,6 +240,56 @@ class _MyHomePageState extends State<MyHomePage> {
                     errorText: locationError,
                   ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextField(
+                  controller: textController,
+                  maxLength: 2000,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    prefixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _emojiShowing = !_emojiShowing;
+                          if (_emojiShowing) {
+                            _showEmojiPicker();
+                          } else {
+                            _showKeyboard();
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        _emojiShowing ? Icons.keyboard : Icons.emoji_emotions,
+                        color: Color.fromARGB(255, 31, 30, 30),
+                      ),
+                    ),
+                    hintText: 'Event remarks',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.only(
+                      left: 16.0,
+                      bottom: 8.0,
+                      top: 8.0,
+                      right: 16.0,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    errorText: textError,
+                  ),
+                ),
+                Offstage(
+                  offstage: !_emojiShowing,
+                  child: EmojiPicker(
+                    textEditingController: textController,
+                    scrollController: _scrollController,
+                    config: Config(
+                      height: 256,
+                      // Other configurations
+                    ),
+                  ),
+                ),
                 Column(
                   children: [
                     SingleChildScrollView(
@@ -261,7 +310,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           height: 150,
                           width:
-                              280, // Adjust this value to increase the height
+                              290, // Adjust this value to increase the height
                           child: Center(
                             child: images.isEmpty
                                 ? Text(
@@ -302,79 +351,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Icon(Icons.add),
                         ),
                       ),
-                    Container(
-                        height: 66.0,
-                        color: Color.fromARGB(255, 230, 233, 236),
-                        child: Row(
-                          children: [
-                            Material(
-                              color: Colors.transparent,
-                              child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _emojiShowing = !_emojiShowing;
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.emoji_emotions,
-                                  color: Color.fromARGB(255, 31, 30, 30),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: TextField(
-                                    controller: _controller,
-                                    scrollController: _scrollController,
-                                    style: const TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.black87,
-                                    ),
-                                    maxLines: 1,
-                                    decoration: InputDecoration(
-                                      hintText: 'Event Remarks',
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      contentPadding: const EdgeInsets.only(
-                                        left: 16.0,
-                                        bottom: 8.0,
-                                        top: 8.0,
-                                        right: 16.0,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                      ),
-                                    )),
-                              ),
-                            ),
-                          ],
-                        )),
-                    Offstage(
-                      offstage: !_emojiShowing,
-                      child: EmojiPicker(
-                        textEditingController: _controller,
-                        scrollController: _scrollController,
-                        config: Config(
-                          height: 256,
-                          checkPlatformCompatibility: true,
-                          emojiViewConfig: EmojiViewConfig(
-                            emojiSizeMax: 28 *
-                                (foundation.defaultTargetPlatform ==
-                                        TargetPlatform.iOS
-                                    ? 1.2
-                                    : 1.0),
-                          ),
-                          swapCategoryAndBottomBar: false,
-                          skinToneConfig: const SkinToneConfig(),
-                          categoryViewConfig: const CategoryViewConfig(),
-                          bottomActionBarConfig: const BottomActionBarConfig(),
-                          searchViewConfig: const SearchViewConfig(),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 20.0),
@@ -407,6 +383,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void _showEmojiPicker() {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void _showKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    Future.delayed(Duration(milliseconds: 100), () {
+      FocusScope.of(context).requestFocus(FocusNode());
+      FocusScope.of(context).requestFocus(textController as FocusNode?);
+    });
   }
 
   void _viewImage(Image image, int index) {

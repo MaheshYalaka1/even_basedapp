@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:get_contacts/screens/events_list.dart';
-import 'package:get_contacts/screens/profile.dart';
-import 'package:get_contacts/screens/shopping.dart';
+import 'package:EventBasedapp/screens/events_list.dart';
+import 'package:EventBasedapp/screens/profile.dart';
+import 'package:EventBasedapp/screens/shopping.dart';
 
 class TabScreen extends StatefulWidget {
   @override

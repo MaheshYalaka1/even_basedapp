@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/dropdown.dart';
-import 'package:get_contacts/screens/events_list.dart';
-import 'package:get_contacts/Login.dart';
+import 'package:EventBasedapp/dropdown.dart';
+import 'package:EventBasedapp/screens/events_list.dart';
+import 'package:EventBasedapp/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EventDetailsScreen extends StatefulWidget {
@@ -53,10 +53,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       appBar: AppBar(
         title: const Text(
           '',
-          style: TextStyle(color: Color.fromARGB(167, 253, 252, 252)),
         ),
-        backgroundColor: Color.fromARGB(
-            255, 27, 27, 28), // Set your desired background color
       ),
       endDrawer: AppDrawer(),
       body: SingleChildScrollView(

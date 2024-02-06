@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "get_contacts" "\0"
+            VALUE "FileDescription", "EventBasedapp" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "get_contacts" "\0"
+            VALUE "InternalName", "EventBasedapp" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "get_contacts.exe" "\0"
-            VALUE "ProductName", "get_contacts" "\0"
+            VALUE "OriginalFilename", "EventBasedapp.exe" "\0"
+            VALUE "ProductName", "EventBasedapp" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

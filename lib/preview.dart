@@ -1,6 +1,7 @@
+import 'package:EventBasedapp/screens/responce.dart';
 import 'package:flutter/material.dart';
-import 'package:get_contacts/dropdown.dart';
-import 'package:get_contacts/screens/sending_options.dart';
+import 'package:EventBasedapp/dropdown.dart';
+import 'package:EventBasedapp/screens/sending_options.dart';
 
 class OtherPage extends StatelessWidget {
   final String eventTitle;
@@ -69,10 +70,14 @@ class OtherPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 249, 144, 78),
+                    ),
                     onPressed: () {
-                      // Perform the action for the first button
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => responce()));
                     },
-                    child: Text('Save'),
+                    child: Text('Responce'),
                   ),
                   ElevatedButton(
                     onPressed: () {

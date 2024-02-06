@@ -1,4 +1,4 @@
-package com.example.get_contacts
+package com.example.EventBasedapp
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

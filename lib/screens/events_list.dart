@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/dropdown.dart';
-import 'package:get_contacts/even_createpage.dart';
-import 'package:get_contacts/login.dart';
-import 'package:get_contacts/screens/even_details.dart';
+import 'package:EventBasedapp/dropdown.dart';
+import 'package:EventBasedapp/even_createpage.dart';
+import 'package:EventBasedapp/login.dart';
+import 'package:EventBasedapp/screens/even_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EventScreenList extends StatefulWidget {
@@ -19,7 +19,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Maria Birthday',
-      'date': '27 jan 2024',
+      'date': '27 Feb 2024',
       'Place': 'Hyderabad',
       'time': '3:00 PM',
       'enteredText': 'Happy Birthday maria',
@@ -28,7 +28,7 @@ class _EventScreenListState extends State<EventScreenList> {
     },
     {
       'category': 'Natalia Graduation',
-      'date': '30 jan 2024',
+      'date': '30 Feb 2024',
       'Place': 'chennai',
       'time': '12:00 PM',
       'enteredText': 'congrats Natalia',

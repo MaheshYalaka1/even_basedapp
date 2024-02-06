@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get_contacts/screens/events_list.dart';
-import 'package:get_contacts/signUp.dart';
+import 'package:EventBasedapp/screens/events_list.dart';
+import 'package:EventBasedapp/signUp.dart';
+
 import 'package:intl_phone_field/intl_phone_field.dart';
-//import 'package:pin_code_fields/pin_code_fields.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -29,15 +30,11 @@ class _LoginPage extends State<LoginPage> {
 
   bool isRegistrationLoading = false;
   bool isOTPLoading = false;
-  late final LocalAuthentication auth;
 
   @override
   void initState() {
     checkLoginStatus();
-    auth = LocalAuthentication();
-    auth.isDeviceSupported().then((bool isSupported) {
-      setState(() {});
-    });
+
     super.initState();
   }
 
@@ -61,32 +58,21 @@ class _LoginPage extends State<LoginPage> {
 
   Future<void> verifyPhone(String number) async {
     // Mock verification process (replace with your desired logic)
-    await Future.delayed(Duration(seconds: 2));
-    showSnackBarText("OTP sent!");
+    await Future.delayed(const Duration(seconds: 2));
+
     setState(() {
       screenState = 1;
     });
   }
 
   Future<void> verifyOTP() async {
-    // Mock OTP verification process (replace with your desired logic)
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-    // Set the login status to true
     await setLoginStatus(true);
 
-    // Navigate to the next screen on successful verification
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => const EventScreenList(),
-      ),
-    );
-  }
-
-  void showSnackBarText(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
       ),
     );
   }
@@ -96,188 +82,172 @@ class _LoginPage extends State<LoginPage> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  "Login",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 27,
+                  ),
                 ),
-                child: Column(
+                const SizedBox(
+                  height: 20,
+                ),
+                IntlPhoneField(
+                  controller: phoneController,
+                  showCountryFlag: false,
+                  initialValue: countryDial,
+                  onCountryChanged: (Country) {
+                    setState(() {
+                      countryDial = "+${Country.dialCode}";
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Phone number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 25, 25,
+                            25), // Set your desired border color here
+                        width: 1.5, // Set your desired border width here
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 20),
+                  ),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: ((context) => Biometric()),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 241, 195, 46),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 1.5,
+                    ),
+                    minimumSize: const Size(double.infinity, 60.0),
+                  ),
+                  child: const Text(
+                    "Sign In",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 26, 26, 26),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    screenState == 0 ? stateRegister() : stateOTP(),
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (screenState == 0) {
-                            if (phoneController.text.isEmpty) {
-                              showSnackBarText("Phone number is empty!");
-                            } else {
-                              // Set registration loading to true before making the request
-                              setState(() {
-                                isRegistrationLoading = true;
-                              });
-
-                              verifyPhone(
-                                      "${countryDial}${phoneController.text}")
-                                  .whenComplete(() {
-                                // Set registration loading to false when the request is complete
-                                setState(() {
-                                  isRegistrationLoading = false;
-                                });
-                              });
-                            }
-                          } else {
-                            if (otpPin.length >= 6) {
-                              setState(() {
-                                isOTPLoading = true;
-                              });
-
-                              _Fingerauthenticate().whenComplete(() {
-                                // Set OTP loading to false when the request is complete
-                              });
-                            } else {
-                              showSnackBarText("Enter OTP correctly");
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(210, 243, 170,
-                              33), // Set your desired button color here
-                          shadowColor: Colors.black,
-                          minimumSize: Size(400, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            side: BorderSide(
-                              color: Colors
-                                  .black, // Set your desired border color here
-                              width: 2.0, // Set your desired border width here
-                            ),
+                    const SizedBox(
+                      height: 107,
+                    ),
+                    const Text("Already have account?"),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
                           ),
+                        );
+                      },
+                      child: const Text(
+                        "Go hear",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 243, 103, 33),
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: screenState == 0
-                            ? isRegistrationLoading
-                                ? CircularProgressIndicator()
-                                : const Text(
-                                    "Sign in >",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 26, 26, 26),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                            : isOTPLoading
-                                ? CircularProgressIndicator()
-                                : GestureDetector(
-                                    onTap: () {
-                                      // Add your authentication logic here
-                                      _Fingerauthenticate();
-                                    },
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        const Text(
-                                            'Authenticate: biometrics only'),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        Icon(Icons.fingerprint),
-                                      ],
-                                    ),
-                                  )),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget stateRegister() {
-    return Column(
+  Widget stateOTP() {
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 16),
-        Text(
-          "Login",
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 27,
-          ),
-        ),
         SizedBox(
-          height: 10,
-        ),
-        IntlPhoneField(
-          controller: phoneController,
-          showCountryFlag: false,
-          initialValue: countryDial,
-          onCountryChanged: (Country) {
-            setState(() {
-              countryDial = "+" + Country.dialCode;
-            });
-          },
-          decoration: InputDecoration(
-            labelText: 'Phone number',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(
-                color: const Color.fromARGB(
-                    255, 25, 25, 25), // Set your desired border color here
-                width: 1.5, // Set your desired border width here
-              ),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 147,
-            ),
-            Text("You are new?"),
-            SizedBox(width: 5),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SignUpPage(),
-                  ),
-                );
-              },
-              child: Text(
-                "Create new",
-                style: TextStyle(
-                  color: Color.fromARGB(240, 250, 107, 71),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+          height: 17,
         ),
       ],
     );
   }
+}
 
-  Widget stateOTP() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(
-          height: 17,
+class Biometric extends StatefulWidget {
+  @override
+  State<Biometric> createState() => _BiometricState();
+}
+
+class _BiometricState extends State<Biometric> {
+  late final LocalAuthentication auth;
+  bool isOTPLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = LocalAuthentication();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Biometric Authentication'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: _Fingerauthenticate,
+          style: ElevatedButton.styleFrom(
+            primary: const Color.fromARGB(255, 241, 195, 46),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            side: const BorderSide(
+              color: Colors.black,
+              width: 1.5,
+            ),
+            minimumSize: const Size(double.infinity, 60.0),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.fingerprint),
+              SizedBox(width: 8), // Adjust spacing as needed
+              Text('Authenticate with Fingerprint&face'),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 
@@ -293,7 +263,7 @@ class _LoginPage extends State<LoginPage> {
 
       if (authenticated) {
         // If authentication is successful, navigate to the new page
-        await Future.delayed(Duration(seconds: 0));
+        await Future.delayed(const Duration(seconds: 0));
         isOTPLoading = false;
 
         // Set the login status to true
@@ -309,5 +279,10 @@ class _LoginPage extends State<LoginPage> {
     } on PlatformException catch (e) {
       print(e);
     }
+  }
+
+  Future<void> setLoginStatus(bool isLoggedIn) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 }

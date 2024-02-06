@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get_contacts/login.dart';
-//import 'package:get_contacts/screens/events_list.dart';
+import 'package:EventBasedapp/login.dart';
+//import 'package:EventBasedapp/screens/events_list.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
