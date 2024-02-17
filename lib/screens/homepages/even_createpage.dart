@@ -1,10 +1,10 @@
 import 'dart:io';
+import 'package:EventBasedapp/screens/authenticationpage/loginpage.dart';
 import 'package:flutter/material.dart';
 
-import 'package:EventBasedapp/dropdown.dart';
-import 'package:EventBasedapp/login.dart';
-import 'package:EventBasedapp/preview.dart';
-import 'package:EventBasedapp/screens/events_list.dart';
+import 'package:EventBasedapp/screens/homepages/dropdown.dart';
+import 'package:EventBasedapp/screens/homepages/preview.dart';
+import 'package:EventBasedapp/screens/homepages/events_list.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
@@ -124,8 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (firstNameError == null && locationError == null && textError == null) {
       Navigator.push(
         context,
+        //text navigate to preview pag
         MaterialPageRoute(
-          builder: (context) => OtherPage(
+          builder: (context) => preview(
             eventTitle: firstNameController.text,
             eventType: selectedEvent,
             eventDate: selectedDate,
@@ -177,6 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   controller: firstNameController,
                   decoration: InputDecoration(
                     labelText: 'Event Title',
+                    hintText: 'Event Title',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(11.0),
                     ),
@@ -228,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   controller: locationController,
                   decoration: InputDecoration(
                     labelText: 'Location',
+                    hintText: 'Location',
                     suffixIcon: IconButton(
                       icon: Icon(Icons.location_on),
                       onPressed: () {
@@ -264,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Color.fromARGB(255, 31, 30, 30),
                       ),
                     ),
-                    hintText: 'Event remarks',
+                    hintText: '\nEvent remarks',
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: const EdgeInsets.only(
@@ -377,6 +380,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 20,
+                )
               ],
             ),
           ),

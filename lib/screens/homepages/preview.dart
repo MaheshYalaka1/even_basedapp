@@ -1,9 +1,9 @@
-import 'package:EventBasedapp/screens/responce.dart';
+import 'package:EventBasedapp/screens/homepages/responce.dart';
 import 'package:flutter/material.dart';
-import 'package:EventBasedapp/dropdown.dart';
-import 'package:EventBasedapp/screens/sending_options.dart';
+import 'package:EventBasedapp/screens/homepages/dropdown.dart';
+import 'package:EventBasedapp/screens/homepages/sending_options.dart';
 
-class OtherPage extends StatelessWidget {
+class preview extends StatelessWidget {
   final String eventTitle;
   final String eventType;
   final DateTime eventDate;
@@ -11,7 +11,7 @@ class OtherPage extends StatelessWidget {
   final String enteredText;
   final List<Image> images;
 
-  OtherPage({
+  preview({
     required this.eventTitle,
     required this.eventType,
     required this.eventDate,
@@ -48,24 +48,43 @@ class OtherPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.left,
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (var i = 0; i < images.length; i++)
-                      Container(
-                        height: 500, //MediaQuery.of(context).size.height * 0.5,
-                        width: 350, //MediaQuery.of(context).size.width * 0.5,
-                        margin: const EdgeInsets.all(10),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: images[i],
+              Container(
+                width: 350.0,
+                height: 350.0,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < images.length; i++)
+                        Container(
+                          width: 350.0,
+                          height: 350.0,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Center(
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: double.infinity,
+                              child: Image(
+                                image: images[i].image,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -81,7 +100,6 @@ class OtherPage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigate to another page when the second button is clicked
                       Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -1,8 +1,9 @@
+import 'package:EventBasedapp/screens/authenticationpage/loginpage.dart';
 import 'package:flutter/material.dart';
-import 'package:EventBasedapp/dropdown.dart';
-import 'package:EventBasedapp/even_createpage.dart';
-import 'package:EventBasedapp/login.dart';
-import 'package:EventBasedapp/screens/even_details.dart';
+import 'package:EventBasedapp/screens/homepages/dropdown.dart';
+import 'package:EventBasedapp/screens/homepages/even_createpage.dart';
+
+import 'package:EventBasedapp/screens/homepages/even_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EventScreenList extends StatefulWidget {

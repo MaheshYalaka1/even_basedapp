@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:EventBasedapp/dropdown.dart';
-import 'package:EventBasedapp/screens/events_list.dart';
-import 'package:EventBasedapp/Login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:EventBasedapp/screens/homepages/dropdown.dart'; // Import for the custom dropdown widget
 
 class EventDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -14,54 +11,29 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
-  bool isMenuOpen = false;
+  bool isMenuOpen = false; // Variable to track whether the menu is open or not
 
+  // Method to toggle the menu state
   void toggleMenu() {
     setState(() {
       isMenuOpen = !isMenuOpen;
     });
   }
 
-  Future<void> navigateToPage(BuildContext context, String itemName) async {
-    if (itemName == 'Sign out') {
-      // Perform sign-out and navigate to the login page
-      await signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    } else if (itemName == 'Home Page') {
-      // Navigate to another page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const EventScreenList()),
-      );
-    } else {
-      print('Selected: $itemName');
-    }
-  }
-
-  Future<void> signOut() async {
-    // Clear the login status in shared preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          '',
-        ),
+        title: const Text(''), // Empty title for the app bar
       ),
-      endDrawer: AppDrawer(),
+      endDrawer: AppDrawer(), // Drawer widget for the end side
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0), // Padding for the body content
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (widget.event.containsKey('imagePath'))
+              // Display event image if available
               Container(
                 height: MediaQuery.of(context).size.height * 0.5,
                 decoration: BoxDecoration(
@@ -72,7 +44,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 16.0), // SizedBox for spacing
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -85,16 +57,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 8.0), // SizedBox for spacing
             Text(
               '${widget.event['Place'] ?? 'Not specified'}',
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 16.0), // SizedBox for spacing
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
+                  // Button for option 1
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle button press
@@ -111,6 +84,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 ),
                 Flexible(
                   flex: 1,
+                  // Button for option 2
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle button press
@@ -124,6 +98,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 Expanded(
+                  // Button for option 3
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle button press

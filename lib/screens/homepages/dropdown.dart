@@ -1,7 +1,8 @@
+import 'package:EventBasedapp/screens/authenticationpage/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:EventBasedapp/login.dart';
-import 'package:EventBasedapp/screens/events_list.dart';
+
+import 'package:EventBasedapp/screens/homepages/events_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -65,14 +66,38 @@ class DrawerListItem extends ConsumerStatefulWidget {
 
 class _DrawerListItemState extends ConsumerState<DrawerListItem> {
   Future<void> signOut() async {
-    // Clear the login status in shared preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(), // Replace with your home page
-      ),
+    // Show a confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Logout'),
+          content: Text('Are you sure you want to sign out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Clear the login status in shared preferences
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isLoggedIn', false);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const LoginPage(), // Replace with your home page
+                  ),
+                );
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -90,12 +115,11 @@ class _DrawerListItemState extends ConsumerState<DrawerListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => EventScreenList(),
+                builder: (context) => const EventScreenList(),
               ),
             );
             break;
           case 1:
-            
             break;
           case 2:
             signOut();

@@ -1,8 +1,9 @@
+import 'package:EventBasedapp/screens/authenticationpage/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:EventBasedapp/dropdown.dart';
-import 'package:EventBasedapp/login.dart';
-import 'package:EventBasedapp/screens/events_list.dart';
+import 'package:EventBasedapp/screens/homepages/dropdown.dart';
+
+import 'package:EventBasedapp/screens/homepages/events_list.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
