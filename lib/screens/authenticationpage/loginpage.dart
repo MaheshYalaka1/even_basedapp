@@ -1,3 +1,4 @@
+import 'package:EventBasedapp/screens/authenticationpage/forgotpassword.dart';
 import 'package:EventBasedapp/screens/authenticationpage/signuppage.dart';
 import 'package:flutter/material.dart';
 import 'package:EventBasedapp/screens/homepages/events_list.dart';
@@ -142,7 +143,12 @@ class _LoginPage extends State<LoginPage> {
                     height: 6,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => forgot_password()));
+                    },
                     child: const Text('Forgot Password ?'),
                   ),
                   const SizedBox(
@@ -158,7 +164,7 @@ class _LoginPage extends State<LoginPage> {
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const SignUpPage(),
